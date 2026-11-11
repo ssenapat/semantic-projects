@@ -1,0 +1,10 @@
+version: 1
+default: deny
+pii: none
+classification_defaults:
+  ontime.flight: internal
+  ontime.carrier: internal
+  ontime.airport: internal
+  ontime.v_carrier_monthly_performance: internal
+  ontime.v_route_summary: internal
+prohibited_column_patterns: [passenger, crew, name_first, name_last, email, phone, ssn, passport, payment, card, password, secret, token]

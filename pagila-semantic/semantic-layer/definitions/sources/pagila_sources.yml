@@ -1,0 +1,44 @@
+# Physical objects the semantic layer may read (spec section 9.1). Anything not listed here is rejected by the SQL guard.
+connection:
+  engine: postgresql
+  database: pagila          # overridable with PAGILA_PG_DATABASE
+  schema: public
+  credentials: env          # PAGILA_PG_HOST, PAGILA_PG_PORT, PAGILA_PG_USER, PAGILA_PG_PASSWORD
+
+sources:
+  - { name: rental,        physical_object: public.rental,        object_type: table,             grain: one row per rental,                primary_key: [rental_id] }
+  - { name: payment,       physical_object: public.payment,       object_type: partitioned_table, grain: one row per payment,               primary_key: [payment_id, payment_date], partition_key: payment_date }
+  - { name: inventory,     physical_object: public.inventory,     object_type: table,             grain: one row per physical film copy,    primary_key: [inventory_id] }
+  - { name: film,          physical_object: public.film,          object_type: table,             grain: one row per film,                  primary_key: [film_id] }
+  - { name: film_category, physical_object: public.film_category, object_type: table,             grain: one row per film and category,    primary_key: [film_id, category_id] }
+  - { name: category,      physical_object: public.category,      object_type: table,             grain: one row per category,              primary_key: [category_id] }
+  - { name: film_actor,    physical_object: public.film_actor,    object_type: table,             grain: one row per film and actor,        primary_key: [actor_id, film_id] }
+  - { name: actor,         physical_object: public.actor,         object_type: table,             grain: one row per actor,                 primary_key: [actor_id] }
+  - { name: language,      physical_object: public.language,      object_type: table,             grain: one row per language,              primary_key: [language_id] }
+  - { name: customer,      physical_object: public.customer,      object_type: table,             grain: one row per customer,              primary_key: [customer_id] }
+  - { name: store,         physical_object: public.store,         object_type: table,             grain: one row per store,                 primary_key: [store_id] }
+  - { name: staff,         physical_object: public.staff,         object_type: table,             grain: one row per staff member,          primary_key: [staff_id] }
+  - { name: address,       physical_object: public.address,       object_type: table,             grain: one row per address,               primary_key: [address_id] }
+  - { name: city,          physical_object: public.city,          object_type: table,             grain: one row per city,                  primary_key: [city_id] }
+  - { name: country,       physical_object: public.country,       object_type: table,             grain: one row per country,               primary_key: [country_id] }
+
+# Defined once, expressed as SELECT fragments by the compiler. Nothing is created in the database.
+derived_sources:
+  - name: film_category_weight
+    description: equal allocation of a film across its categories (spec 7.4)
+    sql: "SELECT film_id, category_id, 1.0 / COUNT(*) OVER (PARTITION BY film_id) AS weight FROM public.film_category"
+  - name: store_in_use
+    description: stores that hold inventory, the only stores exposed (spec 7.5). Satisfied by construction when stores are reached through inventory.
+    sql: "SELECT s.store_id, s.manager_staff_id, s.address_id FROM public.store s WHERE EXISTS (SELECT 1 FROM public.inventory i WHERE i.store_id = s.store_id)"
+  - name: staff_in_use
+    description: staff who appear on a rental or payment, the only staff exposed (spec 7.5). Satisfied by construction when staff are reached through payment.
+    sql: "SELECT st.staff_id, st.first_name, st.last_name, st.store_id, st.active FROM public.staff st WHERE EXISTS (SELECT 1 FROM public.rental r WHERE r.staff_id = st.staff_id) OR EXISTS (SELECT 1 FROM public.payment p WHERE p.staff_id = st.staff_id)"
+
+# Used only by the validation runner for reconciliation, never by consumer queries.
+reference_only:
+  - { name: ref_sales_by_store,         physical_object: public.sales_by_store,         object_type: view }
+  - { name: ref_sales_by_film_category, physical_object: public.sales_by_film_category, object_type: view }
+  - { name: ref_rental_by_category,     physical_object: public.rental_by_category,     object_type: materialized_view }
+
+# Personal / secret columns. The SQL guard rejects any statement that mentions one of these column names (spec 7.9).
+blocked_columns: [email, phone, postal_code, address, address2, district, password, picture]

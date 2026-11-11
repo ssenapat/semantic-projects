@@ -1,0 +1,32 @@
+version: 1
+relationships:
+  - name: flight_to_carrier
+    left: flight_facts.airline_id
+    right: carriers.airline_id
+    type: many_to_one
+    join: inner
+    enforced_fk: true
+    status: validated
+    verified: {row_loss: 0, duplication: 0, as_of: "2026-10-12", check: "validation/referential_integrity.sql#join_row_preservation"}
+  - name: flight_to_origin_airport
+    left: flight_facts.origin_airport_id
+    right: airports.airport_id
+    type: many_to_one
+    join: inner
+    role: origin_airport
+    enforced_fk: true
+    status: validated
+    verified: {row_loss: 0, duplication: 0, as_of: "2026-10-12", check: "validation/referential_integrity.sql#join_row_preservation"}
+  - name: flight_to_destination_airport
+    left: flight_facts.dest_airport_id
+    right: airports.airport_id
+    type: many_to_one
+    join: inner
+    role: destination_airport
+    enforced_fk: true
+    status: validated
+    verified: {row_loss: 0, duplication: 0, as_of: "2026-10-12", check: "validation/referential_integrity.sql#join_row_preservation"}
+prohibited_joins:
+  - {source: airports, column: code, reason: "not unique; NULL for the destination-only airport"}
+  - {source: airports, column: city_market_id, reason: "several airports share a city market; not an identifier"}
+fact_to_fact_joins: prohibited

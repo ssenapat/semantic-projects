@@ -1,0 +1,51 @@
+version: 1
+semantic_models:
+  - name: flight_operations
+    label: Flight Operations
+    status: validated
+    primary_source: flight_facts
+    grain: one row per flight leg
+    time_dimension: flight_date
+    entities:
+      - {name: flight, type: primary, column: flight_id}
+      - {name: carrier, type: foreign, column: airline_id, references: carriers.airline_id}
+      - {name: origin_airport, type: foreign, column: origin_airport_id, references: airports.airport_id}
+      - {name: destination_airport, type: foreign, column: dest_airport_id, references: airports.airport_id}
+    dimensions:
+      - {name: flight_date, label: Flight date, type: time, data_type: date, source: flight_facts, column: fl_date, status: validated, granularities: [day, week, month]}   # Q7: calendar month by fl_date
+      - {name: day_of_week, label: Day of week, type: categorical, data_type: integer, source: flight_facts, column: day_of_week, status: validated, values: {1: Monday, 2: Tuesday, 3: Wednesday, 4: Thursday, 5: Friday, 6: Saturday, 7: Sunday}}
+      - {name: month, label: Month, type: categorical, data_type: integer, source: flight_facts, column: month, status: validated, note: "constant (1) in current data"}
+      - {name: quarter, label: Quarter, type: categorical, data_type: integer, source: flight_facts, column: quarter, status: validated, note: "constant (1) in current data"}
+      - {name: departure_time_block, label: Departure time block, type: categorical, data_type: text, source: flight_facts, column: dep_time_blk, status: validated}
+      - {name: arrival_time_block, label: Arrival time block, type: categorical, data_type: text, source: flight_facts, column: arr_time_blk, status: validated}
+      - {name: carrier_code, label: Carrier code, type: categorical, data_type: text, source: carriers, column: unique_carrier, status: validated, mapping: carrier_display_names}
+      - {name: origin_airport_code, label: Origin airport code, type: categorical, data_type: text, source: airports, role: origin_airport, column: code, status: validated}
+      - {name: origin_city, label: Origin city, type: categorical, data_type: text, source: airports, role: origin_airport, column: city_name, status: validated}
+      - {name: origin_state, label: Origin state, type: categorical, data_type: text, source: airports, role: origin_airport, column: state_abr, status: validated}
+      - {name: destination_airport_code, label: Destination airport code, type: categorical, data_type: text, source: airports, role: destination_airport, column: code, status: validated, null_policy: label_with_city_name}
+      - {name: destination_city, label: Destination city, type: categorical, data_type: text, source: airports, role: destination_airport, column: city_name, status: validated}
+      - {name: destination_state, label: Destination state, type: categorical, data_type: text, source: airports, role: destination_airport, column: state_abr, status: validated}
+      - {name: cancellation_reason, label: Cancellation reason, type: categorical, data_type: text, source: flight_facts, column: cancellation_code, status: draft, values: {A: Carrier, B: Weather, C: National Air System, D: Security}, null_policy: not_cancelled, mapping: cancellation_reasons}
+      - {name: distance_group, label: Distance group, type: ordinal, data_type: integer, source: flight_facts, column: distance_group, status: draft, values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]}   # Q6
+      - {name: departure_delay_group, label: Departure delay group, type: ordinal, data_type: integer, source: flight_facts, column: dep_delay_group, status: draft}   # Q6
+      - {name: arrival_delay_group, label: Arrival delay group, type: ordinal, data_type: integer, source: flight_facts, column: arr_delay_group, status: draft}   # Q6
+    measures:
+      - {name: flight_count_base, aggregation: count, expression: "*"}
+      - {name: operated_count_base, aggregation: count, expression: "*", filter: {column: cancelled, operator: eq, value: 0}}
+      - {name: cancelled_count_base, aggregation: sum, expression: cancelled}
+      - {name: diverted_count_base, aggregation: sum, expression: diverted}
+      - {name: dep_delayed_count_base, aggregation: sum, expression: dep_del15}
+      - {name: arr_delayed_count_base, aggregation: sum, expression: arr_del15}
+      - {name: dep_flagged_count_base, aggregation: count, expression: dep_del15}
+      - {name: arr_flagged_count_base, aggregation: count, expression: arr_del15}
+      - {name: arr_on_time_count_base, aggregation: count, expression: "*", filter: {column: arr_del15, operator: eq, value: 0}}
+    excluded_columns:
+      - {source: flight_facts, column: flight_id, reason: "surrogate key, no business meaning"}
+      - {source: flight_facts, column: op_unique_carrier, reason: "duplicate of carriers.unique_carrier"}
+      - {source: flight_facts, column: op_carrier, reason: "duplicate of op_unique_carrier"}
+      - {source: flight_facts, column: div_airport_landings, reason: "inconsistent with diverted flag, §7.2 #3; pending owner decision"}
+      - {source: flight_facts, column: div_reached_dest, reason: "diversion detail; out of first release"}
+      - {source: flight_facts, columns: [div1_airport_id, div1_airport_seq_id, div2_airport_id, div2_airport_seq_id, div3_airport_id, div3_airport_seq_id, div4_airport_id, div4_airport_seq_id, div5_airport_id, div5_airport_seq_id], reason: "diversion detail; out of first release"}
+      - {source: airports, column: airport_seq_id, reason: "internal BTS sequence id"}
+      - {source: airports, column: city_market_id, reason: "not an airport identifier; shared by several airports, §9.3/§11"}
+      - {source: airports, column: wac, reason: "NULL for destination-only airports; not needed"}

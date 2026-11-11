@@ -1,0 +1,26 @@
+# graph-harness-engineering (local only)
+ghe/
+.claude/worktrees/
+.claude/settings.local.json
+
+# semantic layer
+.venv/
+__pycache__/
+*.egg-info/
+.pytest_cache/
+.env
+
+# secrets
+.git-token.txt
+.DS_Store
+
+.vscode
+
+# runtime artefacts
+.run/
+logs/
+
+# large flight on-time data (download from BTS, see flight-ontime-nl-analytics/data/README.md)
+flight-ontime-nl-analytics/data/*.csv
+flight-ontime-nl-analytics/data/*.zip
+flight-ontime-nl-analytics/data/scripts/2026*/

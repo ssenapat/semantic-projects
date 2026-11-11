@@ -1,0 +1,280 @@
+version: 1
+metrics:
+  - name: flight_count
+    label: "Flight count"
+    description: "Number of flight legs (rows in ontime.flight)."
+    status: validated
+    version: 1
+    business_owner: "<team_or_role>"
+    technical_owner: "<data_platform_owner>"
+    model: flight_operations
+    source: flight_facts
+    grain: flight
+    type: simple
+    measure: flight_count_base
+    expression: "COUNT(*)"
+    filters: []
+    null_handling: "none needed: counts are over all rows in scope; no NULL handling required."
+    allowed_dimensions: [flight_date, day_of_week, month, quarter, departure_time_block, arrival_time_block, carrier_code, origin_airport_code, origin_city, origin_state, destination_airport_code, destination_city, destination_state, distance_group, cancellation_reason, departure_delay_group, arrival_delay_group]
+    unit: count
+    time_basis: fl_date
+    combinable_with: flight_operations
+    validation_sql: "validation/metric_reconciliation.sql#baseline_totals"
+    reconciliation: {baseline: 544003, scope: all, as_of: "2026-10-12", tolerance: 0, reference: "validation/metric_reconciliation.sql#baseline_totals.flights"}
+    approval: {status: pending_business_signoff, approver: null, approved_on: null}
+    change_log:
+      - {version: 1, date: "2026-10-12", change: "initial definition", definition_hash: "sha256:c0b21cb2ead1d718"}
+  - name: operated_flight_count
+    label: "Operated flight count"
+    description: "Number of flight legs that were not cancelled."
+    status: validated
+    version: 1
+    business_owner: "<team_or_role>"
+    technical_owner: "<data_platform_owner>"
+    model: flight_operations
+    source: flight_facts
+    grain: flight
+    type: simple
+    measure: operated_count_base
+    expression: "COUNT(*) FILTER (WHERE cancelled = 0)"
+    filters: []
+    null_handling: "none needed: counts are over all rows in scope; no NULL handling required."
+    allowed_dimensions: [flight_date, day_of_week, month, quarter, departure_time_block, arrival_time_block, carrier_code, origin_airport_code, origin_city, origin_state, destination_airport_code, destination_city, destination_state, distance_group]
+    unit: count
+    time_basis: fl_date
+    combinable_with: flight_operations
+    validation_sql: "validation/metric_reconciliation.sql#baseline_totals"
+    reconciliation: {baseline: 518368, scope: all, as_of: "2026-10-12", tolerance: 0, reference: "validation/metric_reconciliation.sql#baseline_totals.operated_flights"}
+    approval: {status: pending_business_signoff, approver: null, approved_on: null}
+    change_log:
+      - {version: 1, date: "2026-10-12", change: "initial definition", definition_hash: "sha256:ccfc95b2c0531ac3"}
+  - name: cancelled_flight_count
+    label: "Cancelled flight count"
+    description: "Number of cancelled flight legs."
+    status: validated
+    version: 1
+    business_owner: "<team_or_role>"
+    technical_owner: "<data_platform_owner>"
+    model: flight_operations
+    source: flight_facts
+    grain: flight
+    type: simple
+    measure: cancelled_count_base
+    expression: "SUM(cancelled)"
+    filters: []
+    null_handling: "none needed: counts are over all rows in scope; no NULL handling required."
+    allowed_dimensions: [flight_date, day_of_week, month, quarter, departure_time_block, arrival_time_block, carrier_code, origin_airport_code, origin_city, origin_state, destination_airport_code, destination_city, destination_state, distance_group, cancellation_reason]
+    unit: count
+    time_basis: fl_date
+    combinable_with: flight_operations
+    validation_sql: "validation/metric_reconciliation.sql#baseline_totals"
+    reconciliation: {baseline: 25635, scope: all, as_of: "2026-10-12", tolerance: 0, reference: "validation/metric_reconciliation.sql#baseline_totals.cancelled"}
+    approval: {status: pending_business_signoff, approver: null, approved_on: null}
+    change_log:
+      - {version: 1, date: "2026-10-12", change: "initial definition", definition_hash: "sha256:27a7837eff153e8c"}
+  - name: cancellation_rate
+    label: "Cancellation rate"
+    description: "Cancelled flight legs divided by all flight legs."
+    status: validated
+    version: 1
+    business_owner: "<team_or_role>"
+    technical_owner: "<data_platform_owner>"
+    model: flight_operations
+    source: flight_facts
+    grain: flight
+    type: ratio
+    numerator: cancelled_count_base
+    denominator: flight_count_base
+    expression: "SUM(cancelled) / COUNT(*)"
+    filters: []
+    null_handling: "none needed: counts are over all rows in scope; no NULL handling required."
+    allowed_dimensions: [flight_date, day_of_week, month, quarter, departure_time_block, arrival_time_block, carrier_code, origin_airport_code, origin_city, origin_state, destination_airport_code, destination_city, destination_state, distance_group]
+    unit: ratio
+    time_basis: fl_date
+    combinable_with: flight_operations
+    validation_sql: "validation/metric_reconciliation.sql#baseline_totals"
+    reconciliation: {baseline: 0.0471, scope: all, as_of: "2026-10-12", tolerance: 0.0001, reference: "validation/metric_reconciliation.sql#baseline_totals.cancellation_rate"}
+    approval: {status: pending_business_signoff, approver: null, approved_on: null}
+    change_log:
+      - {version: 1, date: "2026-10-12", change: "initial definition", definition_hash: "sha256:56655b7aa39cfe7d"}
+  - name: diverted_flight_count
+    label: "Diverted flight count"
+    description: "Number of diverted flight legs."
+    status: validated
+    version: 1
+    business_owner: "<team_or_role>"
+    technical_owner: "<data_platform_owner>"
+    model: flight_operations
+    source: flight_facts
+    grain: flight
+    type: simple
+    measure: diverted_count_base
+    expression: "SUM(diverted)"
+    filters: []
+    null_handling: "none needed: counts are over all rows in scope; no NULL handling required."
+    allowed_dimensions: [flight_date, day_of_week, month, quarter, departure_time_block, arrival_time_block, carrier_code, origin_airport_code, origin_city, origin_state, destination_airport_code, destination_city, destination_state, distance_group]
+    unit: count
+    time_basis: fl_date
+    combinable_with: flight_operations
+    validation_sql: "validation/metric_reconciliation.sql#baseline_totals"
+    reconciliation: {baseline: 1146, scope: all, as_of: "2026-10-12", tolerance: 0, reference: "validation/metric_reconciliation.sql#baseline_totals.diverted"}
+    approval: {status: pending_business_signoff, approver: null, approved_on: null}
+    change_log:
+      - {version: 1, date: "2026-10-12", change: "initial definition", definition_hash: "sha256:ef0a42871ae364ec"}
+  - name: diversion_rate
+    label: "Diversion rate"
+    description: "Diverted flight legs divided by operated flight legs."
+    status: draft
+    version: 1
+    business_owner: "<team_or_role>"
+    technical_owner: "<data_platform_owner>"
+    model: flight_operations
+    source: flight_facts
+    grain: flight
+    type: ratio
+    numerator: diverted_count_base
+    denominator: operated_count_base
+    expression: "SUM(diverted) / COUNT(*) FILTER (WHERE cancelled = 0)"
+    filters: []
+    null_handling: "none needed: counts are over all rows in scope; no NULL handling required."
+    allowed_dimensions: [flight_date, day_of_week, month, quarter, departure_time_block, arrival_time_block, carrier_code, origin_airport_code, origin_city, origin_state, destination_airport_code, destination_city, destination_state, distance_group]
+    unit: ratio
+    time_basis: fl_date
+    combinable_with: flight_operations
+    validation_sql: "validation/metric_reconciliation.sql#baseline_totals"
+    reconciliation: {baseline: 0.0022, scope: all, as_of: "2026-10-12", tolerance: 0.0001, reference: "validation/metric_reconciliation.sql#baseline_totals.diversion_rate"}
+    approval: {status: pending_business_signoff, approver: null, approved_on: null}
+    change_log:
+      - {version: 1, date: "2026-10-12", change: "initial definition", definition_hash: "sha256:068a04136c62315d"}
+    caveats: ["denominator needs owner confirmation"]
+  - name: departure_delay_rate
+    label: "Departure delay rate"
+    description: "Share of flight legs with a departure flag that departed 15 or more minutes late."
+    status: validated
+    version: 1
+    business_owner: "<team_or_role>"
+    technical_owner: "<data_platform_owner>"
+    model: flight_operations
+    source: flight_facts
+    grain: flight
+    type: ratio
+    numerator: dep_delayed_count_base
+    denominator: dep_flagged_count_base
+    expression: "SUM(dep_del15) / COUNT(dep_del15)"
+    filters: []
+    null_handling: "NULL dep_del15 flags are excluded from numerator and denominator."
+    allowed_dimensions: [flight_date, day_of_week, month, quarter, departure_time_block, arrival_time_block, carrier_code, origin_airport_code, origin_city, origin_state, destination_airport_code, destination_city, destination_state, distance_group]
+    unit: ratio
+    time_basis: fl_date
+    combinable_with: flight_operations
+    validation_sql: "validation/metric_reconciliation.sql#baseline_totals"
+    reconciliation: {baseline: 0.2068, scope: all, as_of: "2026-10-12", tolerance: 0.0001, reference: "validation/metric_reconciliation.sql#baseline_totals.departure_delay_rate"}
+    approval: {status: pending_business_signoff, approver: null, approved_on: null}
+    change_log:
+      - {version: 1, date: "2026-10-12", change: "initial definition", definition_hash: "sha256:be3c235e13109c64"}
+    open_question: Q3
+    caveats: ["includes 406 cancelled flights with a departure flag"]
+  - name: arrival_delay_rate
+    label: "Arrival delay rate"
+    description: "Share of flight legs with an arrival flag that arrived 15 or more minutes late."
+    status: validated
+    version: 1
+    business_owner: "<team_or_role>"
+    technical_owner: "<data_platform_owner>"
+    model: flight_operations
+    source: flight_facts
+    grain: flight
+    type: ratio
+    numerator: arr_delayed_count_base
+    denominator: arr_flagged_count_base
+    expression: "SUM(arr_del15) / COUNT(arr_del15)"
+    filters: []
+    null_handling: "NULL arr_del15 flags are excluded from numerator and denominator."
+    allowed_dimensions: [flight_date, day_of_week, month, quarter, departure_time_block, arrival_time_block, carrier_code, origin_airport_code, origin_city, origin_state, destination_airport_code, destination_city, destination_state, distance_group]
+    unit: ratio
+    time_basis: fl_date
+    combinable_with: flight_operations
+    validation_sql: "validation/metric_reconciliation.sql#baseline_totals"
+    reconciliation: {baseline: 0.2078, scope: all, as_of: "2026-10-12", tolerance: 0.0001, reference: "validation/metric_reconciliation.sql#baseline_totals.arrival_delay_rate"}
+    approval: {status: pending_business_signoff, approver: null, approved_on: null}
+    change_log:
+      - {version: 1, date: "2026-10-12", change: "initial definition", definition_hash: "sha256:f6f689c7dc941ad1"}
+  - name: on_time_arrival_rate
+    label: "On-time arrival rate"
+    description: "Share of flight legs with an arrival flag that arrived on time."
+    status: draft
+    version: 1
+    business_owner: "<team_or_role>"
+    technical_owner: "<data_platform_owner>"
+    model: flight_operations
+    source: flight_facts
+    grain: flight
+    type: ratio
+    numerator: arr_on_time_count_base
+    denominator: arr_flagged_count_base
+    expression: "COUNT(*) FILTER (WHERE arr_del15 = 0) / COUNT(arr_del15)"
+    filters: []
+    null_handling: "NULL arr_del15 flags are excluded from numerator and denominator."
+    allowed_dimensions: [flight_date, day_of_week, month, quarter, departure_time_block, arrival_time_block, carrier_code, origin_airport_code, origin_city, origin_state, destination_airport_code, destination_city, destination_state, distance_group]
+    unit: ratio
+    time_basis: fl_date
+    combinable_with: flight_operations
+    validation_sql: "validation/metric_reconciliation.sql#baseline_totals"
+    reconciliation: {baseline: 0.7922, scope: all, as_of: "2026-10-12", tolerance: 0.0001, reference: "validation/metric_reconciliation.sql#baseline_totals.on_time_arrival_rate"}
+    approval: {status: pending_business_signoff, approver: null, approved_on: null}
+    change_log:
+      - {version: 1, date: "2026-10-12", change: "initial definition", definition_hash: "sha256:8f22527f9a555388"}
+    open_question: Q2
+  - name: departure_delayed_flight_count
+    label: "Departure delayed flight count"
+    description: "Number of flight legs flagged as delayed 15+ minutes at departure."
+    status: validated
+    version: 1
+    business_owner: "<team_or_role>"
+    technical_owner: "<data_platform_owner>"
+    model: flight_operations
+    source: flight_facts
+    grain: flight
+    type: simple
+    measure: dep_delayed_count_base
+    expression: "SUM(dep_del15)"
+    filters: []
+    null_handling: "NULL dep_del15 flags are excluded from numerator and denominator."
+    allowed_dimensions: [flight_date, day_of_week, month, quarter, departure_time_block, arrival_time_block, carrier_code, origin_airport_code, origin_city, origin_state, destination_airport_code, destination_city, destination_state, distance_group]
+    unit: count
+    time_basis: fl_date
+    combinable_with: flight_operations
+    validation_sql: "validation/metric_reconciliation.sql#baseline_totals"
+    reconciliation: {baseline: 107297, scope: all, as_of: "2026-10-12", tolerance: 0, reference: "validation/metric_reconciliation.sql#baseline_totals.dep_delayed"}
+    approval: {status: pending_business_signoff, approver: null, approved_on: null}
+    change_log:
+      - {version: 1, date: "2026-10-12", change: "initial definition", definition_hash: "sha256:21610f54eed9e2f3"}
+  - name: arrival_delayed_flight_count
+    label: "Arrival delayed flight count"
+    description: "Number of flight legs flagged as delayed 15+ minutes at arrival."
+    status: validated
+    version: 1
+    business_owner: "<team_or_role>"
+    technical_owner: "<data_platform_owner>"
+    model: flight_operations
+    source: flight_facts
+    grain: flight
+    type: simple
+    measure: arr_delayed_count_base
+    expression: "SUM(arr_del15)"
+    filters: []
+    null_handling: "NULL arr_del15 flags are excluded from numerator and denominator."
+    allowed_dimensions: [flight_date, day_of_week, month, quarter, departure_time_block, arrival_time_block, carrier_code, origin_airport_code, origin_city, origin_state, destination_airport_code, destination_city, destination_state, distance_group]
+    unit: count
+    time_basis: fl_date
+    combinable_with: flight_operations
+    validation_sql: "validation/metric_reconciliation.sql#baseline_totals"
+    reconciliation: {baseline: 107475, scope: all, as_of: "2026-10-12", tolerance: 0, reference: "validation/metric_reconciliation.sql#baseline_totals.arr_delayed"}
+    approval: {status: pending_business_signoff, approver: null, approved_on: null}
+    change_log:
+      - {version: 1, date: "2026-10-12", change: "initial definition", definition_hash: "sha256:2d3af92a0f166973"}
+releases:
+  - name: minimal_first_release
+    model: flight_operations
+    metrics: [flight_count, cancelled_flight_count, cancellation_rate, arrival_delay_rate, departure_delay_rate]
+    dimensions: [flight_date, day_of_week, carrier_code, origin_airport_code, destination_airport_code]

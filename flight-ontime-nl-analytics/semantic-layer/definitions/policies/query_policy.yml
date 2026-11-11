@@ -1,0 +1,51 @@
+version: 1
+database_access: read_only
+allowed_statement_types: [SELECT, WITH]
+prohibited_statement_types: [INSERT, UPDATE, DELETE, MERGE, CREATE, ALTER, DROP, TRUNCATE, GRANT, REVOKE, COPY, CALL, DO]
+prohibited_keywords: [INSERT, UPDATE, DELETE, MERGE, CREATE, ALTER, DROP, TRUNCATE, GRANT, REVOKE, COPY, CALL, DO, INTO, SET, RESET, LOCK, VACUUM, ANALYZE, REFRESH, LISTEN, NOTIFY, UNLISTEN, PREPARE, EXECUTE, DEALLOCATE, DISCARD, COMMENT, REINDEX, CLUSTER, IMPORT, SECURITY, CHECKPOINT, LOAD, BEGIN, COMMIT, ROLLBACK, SAVEPOINT, SHARE]
+prohibited_functions: [pg_terminate_backend, pg_cancel_backend, pg_reload_conf, pg_rotate_logfile, set_config, pg_sleep, pg_read_file, pg_read_binary_file, pg_ls_dir, pg_stat_file, nextval, setval, txid_current, pg_switch_wal, pg_create_restore_point, pg_promote, pg_logical_emit_message, query_to_xml]
+prohibited_function_prefixes: [lo_, dblink, pg_advisory]
+allowed_sources: [ontime.flight, ontime.carrier, ontime.airport]
+reconciliation_only_sources: [ontime.v_carrier_monthly_performance, ontime.v_route_summary]
+prohibit_raw_sql_from_consumers: true
+prohibit_llm_generated_sql: true
+require_date_filter: false          # single month loaded; set true when more months are loaded
+max_result_rows: 1000
+default_limit: 100
+max_dimensions: 5
+max_metrics_per_query: 5            # single source of the per-query metric limit (C-3.1)
+max_filters: 10
+max_filter_values: 100
+statement_timeout_seconds: 30
+idle_in_transaction_session_timeout_seconds: 60
+require_metric_allowlist: true
+audiences:
+  consumer: {min_status: approved}
+  internal: {min_status: validated}
+  reconciliation: {min_status: draft}
+unsupported_when: [metric_not_in_catalog, dimension_not_in_catalog, dimension_not_allowed_for_metric, metric_not_exposable, dimension_not_exposable, refers_to_unavailable_data, mapping_not_approved]
+clarify_when: [delay_direction_unspecified, airport_role_unspecified]
+ambiguous_terms:
+  - reason_code: delay_direction_unspecified     # Q1
+    terms: [delay_rate, delayed_flights, delayed_flight_count, delay_count, delays, delayed, late_flights, late_rate]
+    options: [departure_delay_rate, arrival_delay_rate, departure_delayed_flight_count, arrival_delayed_flight_count]
+  - reason_code: airport_role_unspecified        # Q4
+    terms: [airport, airport_code, airport_city, airport_state, airport_name, city, state]
+    options: [origin_airport_code, destination_airport_code, origin_city, destination_city, origin_state, destination_state]
+    question: "Do you mean the origin airport, the destination airport, or both?"
+unavailable_concepts:                            # §10.2 / §7.2 #8
+  - reason_code: refers_to_unavailable_data
+    reason: "Not available in tran-stats: no delay minutes, passengers, seats, revenue/fares, miles, clock times, tail numbers, marketing carrier or cargo data."
+    terms: [average_delay_minutes, avg_delay_minutes, mean_delay_minutes, total_delay_minutes, delay_minutes, arrival_delay_minutes, departure_delay_minutes,
+            passenger_count, passengers, load_factor, revenue, fare, fares, average_fare, seat_capacity, seats, available_seats,
+            distance_miles, flight_distance_miles, miles, total_miles, flight_time, air_time, elapsed_time,
+            tail_number, aircraft_utilisation, aircraft_utilization, tail_utilisation, flight_number,
+            scheduled_departure_time, actual_departure_time, scheduled_arrival_time, actual_arrival_time,
+            marketing_carrier, codeshare, cargo, time_zone]
+  - reason_code: mapping_not_approved            # Q5
+    reason: "Carrier display names are not in the database and no approved mapping exists yet."
+    terms: [carrier_name, carrier_display_name, airline_name]
+glossary_terms:
+  - term: carrier
+    meaning: "Operating carrier (carrier_code). Marketing carrier is not supported."
+    maps_to: [carrier_code]

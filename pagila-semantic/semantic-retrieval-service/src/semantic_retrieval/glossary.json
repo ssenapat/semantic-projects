@@ -1,0 +1,112 @@
+{
+  "_comment": "Business word -> catalog words. Edit freely; restart the service to reload.",
+  "synonyms": {
+    "sales": [
+      "revenue",
+      "payment"
+    ],
+    "income": [
+      "revenue"
+    ],
+    "earnings": [
+      "revenue"
+    ],
+    "money": [
+      "revenue",
+      "payment"
+    ],
+    "transactions": [
+      "rental"
+    ],
+    "rentals": [
+      "rental"
+    ],
+    "popular": [
+      "rental",
+      "count"
+    ],
+    "movie": [
+      "film"
+    ],
+    "movies": [
+      "film"
+    ],
+    "title": [
+      "film"
+    ],
+    "genre": [
+      "category"
+    ],
+    "genres": [
+      "category"
+    ],
+    "shop": [
+      "store"
+    ],
+    "branch": [
+      "store"
+    ],
+    "client": [
+      "customer"
+    ],
+    "clients": [
+      "customer"
+    ],
+    "city": [
+      "customer_city"
+    ],
+    "country": [
+      "customer_country"
+    ],
+    "month": [
+      "rental_date",
+      "month"
+    ],
+    "monthly": [
+      "rental_date",
+      "month"
+    ],
+    "daily": [
+      "rental_date",
+      "day"
+    ],
+    "yearly": [
+      "rental_date",
+      "year"
+    ],
+    "late": [
+      "late",
+      "return"
+    ],
+    "overdue": [
+      "late",
+      "return"
+    ]
+  },
+  "ambiguous": {
+    "store": [
+      "store_id",
+      "payment_store"
+    ],
+    "stores": [
+      "store_id",
+      "payment_store"
+    ],
+    "shop": [
+      "store_id",
+      "payment_store"
+    ],
+    "branch": [
+      "store_id",
+      "payment_store"
+    ],
+    "category": [
+      "category",
+      "payment_category"
+    ],
+    "genre": [
+      "category",
+      "payment_category"
+    ]
+  }
+}

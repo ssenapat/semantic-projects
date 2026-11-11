@@ -1,0 +1,739 @@
+{
+  "run_at": "2026-11-10T15:54:29+00:00",
+  "database": "pagila",
+  "total": 90,
+  "passed": 89,
+  "failed_errors": 0,
+  "failed_info": 1,
+  "all_error_checks_passed": true,
+  "sql_checks": [
+    {
+      "check": "V01_row_counts",
+      "label": "rental",
+      "actual": 51805,
+      "expected": 51805,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "error",
+      "description": "Row counts of every exposed table match the baseline in spec 6.1."
+    },
+    {
+      "check": "V01_row_counts",
+      "label": "payment",
+      "actual": 51061,
+      "expected": 51061,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "error",
+      "description": "Row counts of every exposed table match the baseline in spec 6.1."
+    },
+    {
+      "check": "V01_row_counts",
+      "label": "inventory",
+      "actual": 4581,
+      "expected": 4581,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "error",
+      "description": "Row counts of every exposed table match the baseline in spec 6.1."
+    },
+    {
+      "check": "V01_row_counts",
+      "label": "film",
+      "actual": 1000,
+      "expected": 1000,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "error",
+      "description": "Row counts of every exposed table match the baseline in spec 6.1."
+    },
+    {
+      "check": "V01_row_counts",
+      "label": "film_category",
+      "actual": 2367,
+      "expected": 2367,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "error",
+      "description": "Row counts of every exposed table match the baseline in spec 6.1."
+    },
+    {
+      "check": "V01_row_counts",
+      "label": "category",
+      "actual": 16,
+      "expected": 16,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "error",
+      "description": "Row counts of every exposed table match the baseline in spec 6.1."
+    },
+    {
+      "check": "V01_row_counts",
+      "label": "film_actor",
+      "actual": 5462,
+      "expected": 5462,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "error",
+      "description": "Row counts of every exposed table match the baseline in spec 6.1."
+    },
+    {
+      "check": "V01_row_counts",
+      "label": "actor",
+      "actual": 200,
+      "expected": 200,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "error",
+      "description": "Row counts of every exposed table match the baseline in spec 6.1."
+    },
+    {
+      "check": "V01_row_counts",
+      "label": "language",
+      "actual": 6,
+      "expected": 6,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "error",
+      "description": "Row counts of every exposed table match the baseline in spec 6.1."
+    },
+    {
+      "check": "V01_row_counts",
+      "label": "customer",
+      "actual": 999,
+      "expected": 999,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "error",
+      "description": "Row counts of every exposed table match the baseline in spec 6.1."
+    },
+    {
+      "check": "V01_row_counts",
+      "label": "store",
+      "actual": 500,
+      "expected": 500,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "error",
+      "description": "Row counts of every exposed table match the baseline in spec 6.1."
+    },
+    {
+      "check": "V01_row_counts",
+      "label": "staff",
+      "actual": 1500,
+      "expected": 1500,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "error",
+      "description": "Row counts of every exposed table match the baseline in spec 6.1."
+    },
+    {
+      "check": "V01_row_counts",
+      "label": "address",
+      "actual": 1003,
+      "expected": 1003,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "error",
+      "description": "Row counts of every exposed table match the baseline in spec 6.1."
+    },
+    {
+      "check": "V01_row_counts",
+      "label": "city",
+      "actual": 600,
+      "expected": 600,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "error",
+      "description": "Row counts of every exposed table match the baseline in spec 6.1."
+    },
+    {
+      "check": "V01_row_counts",
+      "label": "country",
+      "actual": 109,
+      "expected": 109,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "error",
+      "description": "Row counts of every exposed table match the baseline in spec 6.1."
+    },
+    {
+      "check": "V02_revenue_total",
+      "label": "total payment amount",
+      "actual": 170962.39,
+      "expected": 170962.39,
+      "tolerance": 0.005,
+      "passed": true,
+      "severity": "error",
+      "description": "Total revenue and payment count match the baseline in spec 6.4."
+    },
+    {
+      "check": "V02_revenue_total",
+      "label": "payment count",
+      "actual": 51061.0,
+      "expected": 51061.0,
+      "tolerance": 0.0,
+      "passed": true,
+      "severity": "error",
+      "description": "Total revenue and payment count match the baseline in spec 6.4."
+    },
+    {
+      "check": "V02_revenue_total",
+      "label": "max payment",
+      "actual": 11.99,
+      "expected": 11.99,
+      "tolerance": 0.0,
+      "passed": true,
+      "severity": "error",
+      "description": "Total revenue and payment count match the baseline in spec 6.4."
+    },
+    {
+      "check": "V03_payment_integrity",
+      "label": "payments with no rental",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "error",
+      "description": "Payment/rental relationship quirks documented in spec 7.3 and open/closed rentals in 7.1."
+    },
+    {
+      "check": "V03_payment_integrity",
+      "label": "rentals with no payment",
+      "actual": 749,
+      "expected": 749,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "error",
+      "description": "Payment/rental relationship quirks documented in spec 7.3 and open/closed rentals in 7.1."
+    },
+    {
+      "check": "V03_payment_integrity",
+      "label": "rentals with more than one payment",
+      "actual": 1,
+      "expected": 1,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "error",
+      "description": "Payment/rental relationship quirks documented in spec 7.3 and open/closed rentals in 7.1."
+    },
+    {
+      "check": "V03_payment_integrity",
+      "label": "payments whose customer differs from the rental customer",
+      "actual": 5,
+      "expected": 5,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "error",
+      "description": "Payment/rental relationship quirks documented in spec 7.3 and open/closed rentals in 7.1."
+    },
+    {
+      "check": "V03_payment_integrity",
+      "label": "zero-value payments",
+      "actual": 24,
+      "expected": 24,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "error",
+      "description": "Payment/rental relationship quirks documented in spec 7.3 and open/closed rentals in 7.1."
+    },
+    {
+      "check": "V03_payment_integrity",
+      "label": "returned before rented",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "error",
+      "description": "Payment/rental relationship quirks documented in spec 7.3 and open/closed rentals in 7.1."
+    },
+    {
+      "check": "V03_payment_integrity",
+      "label": "open rentals",
+      "actual": 241,
+      "expected": 241,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "error",
+      "description": "Payment/rental relationship quirks documented in spec 7.3 and open/closed rentals in 7.1."
+    },
+    {
+      "check": "V03_payment_integrity",
+      "label": "payments dated before their rental (informational, spec 7.2.1)",
+      "actual": 14665,
+      "expected": 14665,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "error",
+      "description": "Payment/rental relationship quirks documented in spec 7.3 and open/closed rentals in 7.1."
+    },
+    {
+      "check": "V04_category_allocation",
+      "label": "films with no category",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "error",
+      "description": "Every film has a category and equal-allocation weights sum to 1 per film (spec 7.4)."
+    },
+    {
+      "check": "V04_category_allocation",
+      "label": "films with more than one category",
+      "actual": 964,
+      "expected": 964,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "error",
+      "description": "Every film has a category and equal-allocation weights sum to 1 per film (spec 7.4)."
+    },
+    {
+      "check": "V04_category_allocation",
+      "label": "films whose weights do not sum to 1",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "error",
+      "description": "Every film has a category and equal-allocation weights sum to 1 per film (spec 7.4)."
+    },
+    {
+      "check": "V05_scope_and_shape",
+      "label": "stores holding inventory",
+      "actual": 2,
+      "expected": 2,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "error",
+      "description": "Stores and staff in use, payment partitions, rating labels, title uniqueness (spec 6.1, 7.5)."
+    },
+    {
+      "check": "V05_scope_and_shape",
+      "label": "store_in_use rows",
+      "actual": 2,
+      "expected": 2,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "error",
+      "description": "Stores and staff in use, payment partitions, rating labels, title uniqueness (spec 6.1, 7.5)."
+    },
+    {
+      "check": "V05_scope_and_shape",
+      "label": "staff_in_use rows",
+      "actual": 2,
+      "expected": 2,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "error",
+      "description": "Stores and staff in use, payment partitions, rating labels, title uniqueness (spec 6.1, 7.5)."
+    },
+    {
+      "check": "V05_scope_and_shape",
+      "label": "payment partitions that hold rows",
+      "actual": 55,
+      "expected": 55,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "error",
+      "description": "Stores and staff in use, payment partitions, rating labels, title uniqueness (spec 6.1, 7.5)."
+    },
+    {
+      "check": "V05_scope_and_shape",
+      "label": "distinct film ratings",
+      "actual": 5,
+      "expected": 5,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "error",
+      "description": "Stores and staff in use, payment partitions, rating labels, title uniqueness (spec 6.1, 7.5)."
+    },
+    {
+      "check": "V05_scope_and_shape",
+      "label": "duplicate film titles",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "error",
+      "description": "Stores and staff in use, payment partitions, rating labels, title uniqueness (spec 6.1, 7.5)."
+    },
+    {
+      "check": "V05_scope_and_shape",
+      "label": "rentals on inventory not in stores 1 or 2",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "error",
+      "description": "Stores and staff in use, payment partitions, rating labels, title uniqueness (spec 6.1, 7.5)."
+    }
+  ],
+  "reconciliations": [
+    {
+      "check": "X_revenue_by_rental_month_sums",
+      "label": "revenue by rental month adds up to total",
+      "actual": 170962.38999999998,
+      "expected": 170962.39,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "error",
+      "description": "spec 7.2.1"
+    },
+    {
+      "check": "X_allocated_revenue_sum",
+      "label": "allocated category revenue adds up to total",
+      "actual": 170962.39,
+      "expected": 170962.39,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "error",
+      "description": "spec 7.4"
+    },
+    {
+      "check": "X_allocated_revenue_sum",
+      "label": "category count",
+      "actual": 16,
+      "expected": 16,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "error",
+      "description": ""
+    },
+    {
+      "check": "X_allocated_rentals_sum",
+      "label": "allocated category rentals add up to total",
+      "actual": 51805.0,
+      "expected": 51805,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "error",
+      "description": "spec 7.4"
+    },
+    {
+      "check": "V06_reference_sales_by_store",
+      "label": "store count matches Pagila sales_by_store",
+      "actual": 2,
+      "expected": 2,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "error",
+      "description": ""
+    },
+    {
+      "check": "V06_reference_sales_by_store",
+      "label": "store revenue #1 (sorted) matches Pagila",
+      "actual": 85197.35,
+      "expected": 85197.35,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "error",
+      "description": "spec 12"
+    },
+    {
+      "check": "V06_reference_sales_by_store",
+      "label": "store revenue #2 (sorted) matches Pagila",
+      "actual": 85765.04,
+      "expected": 85765.04,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "error",
+      "description": "spec 12"
+    },
+    {
+      "check": "V06_reference_sales_by_film_category",
+      "label": "allocated category revenue never exceeds Pagila's full-count view",
+      "actual": 0,
+      "expected": 0,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "error",
+      "description": "Pagila counts a film fully in every category, so it is expected to be higher"
+    },
+    {
+      "check": "V06_reference_sales_by_film_category",
+      "label": "Pagila view over-counts total (informational)",
+      "actual": 405100.72,
+      "expected": 170962.39,
+      "tolerance": 0.01,
+      "passed": false,
+      "severity": "info",
+      "description": "expected to exceed the total because films have several categories"
+    },
+    {
+      "check": "X_unpaid_rentals_have_no_revenue",
+      "label": "paid rentals + unpaid rentals = all rentals",
+      "actual": 51805,
+      "expected": 51805,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "error",
+      "description": ""
+    }
+  ],
+  "probes": [
+    {
+      "check": "probe",
+      "label": "payment_activity.measure.total_revenue",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "payment_activity.measure.payment_count",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "payment_activity.measure.avg_payment",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "payment_activity.measure.paying_customer_count",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "payment_activity.measure.zero_payment_count",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "payment_activity.dimension.rental_date",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "payment_activity.dimension.payment_date",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "payment_activity.dimension.payment_customer_id",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "payment_activity.dimension.payment_customer",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "payment_activity.dimension.payment_staff",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "payment_activity.dimension.payment_store",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "payment_activity.dimension.payment_film",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "payment_activity.dimension.payment_category",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "payment_activity.dimension.customer_city",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "payment_activity.dimension.customer_country",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "payment_activity.measure.total_revenue.by_category",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "payment_activity.measure.payment_count.by_category",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "payment_activity.measure.avg_payment.by_category",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "payment_activity.measure.paying_customer_count.by_category",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "payment_activity.measure.zero_payment_count.by_category",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "rental_activity.measure.rental_count",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "rental_activity.measure.returned_count",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "rental_activity.measure.open_rental_count",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "rental_activity.measure.active_customer_count",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "rental_activity.measure.avg_rental_days",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "rental_activity.dimension.rental_date",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "rental_activity.dimension.rental_hour",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "rental_activity.dimension.day_of_week",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "rental_activity.dimension.is_returned",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "rental_activity.dimension.store_id",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "rental_activity.dimension.film_title",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "rental_activity.dimension.rating",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "rental_activity.dimension.film_language",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "rental_activity.dimension.category",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "rental_activity.dimension.actor_name",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "rental_activity.dimension.customer_id",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "rental_activity.dimension.customer_name",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "rental_activity.dimension.customer_city",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "rental_activity.dimension.customer_country",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "rental_activity.measure.rental_count.by_category",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "rental_activity.measure.returned_count.by_category",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "rental_activity.measure.open_rental_count.by_category",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "rental_activity.measure.active_customer_count.by_category",
+      "passed": true,
+      "severity": "error"
+    },
+    {
+      "check": "probe",
+      "label": "rental_activity.measure.avg_rental_days.by_category",
+      "passed": true,
+      "severity": "error"
+    }
+  ]
+}

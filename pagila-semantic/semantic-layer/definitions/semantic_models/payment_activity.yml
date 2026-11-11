@@ -1,0 +1,115 @@
+# One row per payment (spec 9.2). Revenue is dated by the rental the payment is for (spec 7.2.1).
+name: payment_activity
+label: Payment Activity
+description: Payments and revenue, attributed by default to the date of the paid rental.
+version: 1.1.0
+status: validated
+validated_on: 2026-11-10
+validation_evidence: validation/results/latest.json
+business_owner: srinivasa.senapathi
+technical_owner: srinivasa.senapathi
+source: payment
+grain: one row per payment
+time_dimension: rental_date
+null_handling: Group-by on nullable columns shows NULL as the label Unknown. Rentals with no payment contribute no rows.
+change_log:
+  - { version: 1.0.0, date: 2026-11-01, change: initial definition from specification; revenue dated by rental_date }
+  - { version: 1.1.0, date: 2026-11-10, change: "added combinable_with and allowed_dimensions (spec 9.3.1, 10.1)" }
+
+base: { table: public.payment, alias: p }
+always_joined: [r]    # revenue is dated by the paid rental, so the rental join is mandatory
+
+joins:
+  - { alias: r,  table: public.rental,    condition: "r.rental_id = p.rental_id",       parent: p,  relationship: payment_rental }
+  - { alias: i,  table: public.inventory, condition: "i.inventory_id = r.inventory_id", parent: r,  relationship: rental_inventory }
+  - { alias: f,  table: public.film,      condition: "f.film_id = i.film_id",           parent: i,  relationship: inventory_film }
+  - { alias: w,  derived: film_category_weight, type: left, condition: "w.film_id = f.film_id", parent: f, relationship: film_category_film }
+  - { alias: c,  table: public.category,  type: left, condition: "c.category_id = w.category_id", parent: w, relationship: film_category_category }
+  - { alias: cu, table: public.customer,  condition: "cu.customer_id = p.customer_id",  parent: p,  relationship: payment_customer }
+  - { alias: ad, table: public.address,   condition: "ad.address_id = cu.address_id",    parent: cu, relationship: customer_address }
+  - { alias: ci, table: public.city,      condition: "ci.city_id = ad.city_id",          parent: ad, relationship: address_city }
+  - { alias: co, table: public.country,   condition: "co.country_id = ci.country_id",    parent: ci, relationship: city_country }
+  - { alias: st, table: public.staff,     condition: "st.staff_id = p.staff_id",         parent: p,  relationship: payment_staff }
+
+allocation:
+  alias: w
+  weight: "COALESCE(w.weight, 1)"
+  trigger_alias: c
+
+dimensions:
+  - { name: rental_date,   label: Rental Date (default revenue date), description: "Date of the rental the payment is for. Default date for revenue.", type: time, expression: "r.rental_date", granularities: [day, week, month, quarter, year], requires: [r] }
+  - { name: payment_date,  label: Payment Date (cash received), description: "When the payment was recorded. Often before the rental it pays for (spec 7.2.1), so use only when asked for payments received.", type: time, expression: "p.payment_date", granularities: [day, week, month, quarter, year], requires: [], caveat_when_used: payment_date }
+  - { name: payment_customer_id, label: Customer ID, description: "Customer key on the payment.", type: categorical, expression: "p.customer_id", requires: [], data_type: integer }
+  - { name: payment_customer, label: Customer, description: "Customer on the payment.", type: categorical, expression: "cu.first_name || ' ' || cu.last_name", requires: [cu], personal_data: true }
+  - { name: payment_staff, label: Staff Member, description: "Staff member who took the payment (only staff in use are reachable).", type: categorical, expression: "st.first_name || ' ' || st.last_name", requires: [st], personal_data: true }
+  - { name: payment_store, label: Store, description: "Store of the rented copy. Unpaid rentals drop out.", type: categorical, expression: "i.store_id", requires: [i], data_type: integer }
+  - { name: payment_film,  label: Film, description: "Film of the paid rental.", type: categorical, expression: "f.title", requires: [f] }
+  - { name: payment_category, label: Category, description: "Film category, allocated equally across a film's categories so revenue adds up.", type: categorical, expression: "COALESCE(c.name, 'Uncategorised')", requires: [c], allocated: true }
+  - { name: customer_city, label: Customer City, description: "City of the paying customer's address.", type: categorical, expression: "ci.city", requires: [ci] }
+  - { name: customer_country, label: Customer Country, description: "Country of the paying customer's address.", type: categorical, expression: "co.country", requires: [co] }
+
+measures:
+  - name: total_revenue
+    label: Total Revenue
+    description: Sum of payment amounts.
+    unit: currency
+    sql: "SUM(p.amount)"
+    allocated_sql: "SUM(p.amount * COALESCE(w.weight, 1))"
+    requires: []
+    status: validated
+    version: 1.1.0
+    combinable_with: payment_activity
+    allowed_dimensions: [rental_date, payment_date, payment_customer_id, payment_customer, payment_staff, payment_store, payment_film, payment_category, customer_city, customer_country]
+    validation: [V02_revenue_total, X_revenue_by_rental_month_sums, X_allocated_revenue_sum]
+    change_log: [{ version: 1.0.0, date: 2026-11-01, change: initial }, { version: 1.1.0, date: 2026-11-10, change: "added combinable_with and allowed_dimensions (spec 9.3.1, 10.1)" }]
+  - name: payment_count
+    label: Payments
+    description: Number of payments.
+    unit: count
+    sql: "COUNT(p.payment_id)"
+    allocated_sql: "SUM(COALESCE(w.weight, 1))"
+    requires: []
+    status: validated
+    version: 1.1.0
+    combinable_with: payment_activity
+    allowed_dimensions: [rental_date, payment_date, payment_customer_id, payment_customer, payment_staff, payment_store, payment_film, payment_category, customer_city, customer_country]
+    validation: [V01_row_counts]
+    change_log: [{ version: 1.0.0, date: 2026-11-01, change: initial }, { version: 1.1.0, date: 2026-11-10, change: "added combinable_with and allowed_dimensions (spec 9.3.1, 10.1)" }]
+  - name: avg_payment
+    label: Average Payment
+    description: Average payment amount.
+    unit: currency
+    sql: "AVG(p.amount)"
+    allocated_sql: "SUM(p.amount * COALESCE(w.weight, 1)) / NULLIF(SUM(COALESCE(w.weight, 1)), 0)"
+    requires: []
+    status: validated
+    version: 1.1.0
+    combinable_with: payment_activity
+    allowed_dimensions: [rental_date, payment_date, payment_customer_id, payment_customer, payment_staff, payment_store, payment_film, payment_category, customer_city, customer_country]
+    validation: [V02_revenue_total]
+    change_log: [{ version: 1.0.0, date: 2026-11-01, change: initial }, { version: 1.1.0, date: 2026-11-10, change: "added combinable_with and allowed_dimensions (spec 9.3.1, 10.1)" }]
+  - name: paying_customer_count
+    label: Paying Customers
+    description: Distinct customers with a payment. A distinct count is not allocated by category, so it does not add up across categories.
+    unit: count
+    sql: "COUNT(DISTINCT p.customer_id)"
+    requires: []
+    status: validated
+    version: 1.1.0
+    combinable_with: payment_activity
+    allowed_dimensions: [rental_date, payment_date, payment_customer_id, payment_customer, payment_staff, payment_store, payment_film, payment_category, customer_city, customer_country]
+    validation: [V01_row_counts]
+    change_log: [{ version: 1.0.0, date: 2026-11-01, change: initial }, { version: 1.1.0, date: 2026-11-10, change: "added combinable_with and allowed_dimensions (spec 9.3.1, 10.1)" }]
+  - name: zero_payment_count
+    label: Zero-Value Payments
+    description: Payments of exactly 0.00.
+    unit: count
+    sql: "COUNT(p.payment_id) FILTER (WHERE p.amount = 0)"
+    allocated_sql: "SUM(COALESCE(w.weight, 1)) FILTER (WHERE p.amount = 0)"
+    requires: []
+    status: validated
+    version: 1.1.0
+    combinable_with: payment_activity
+    allowed_dimensions: [rental_date, payment_date, payment_customer_id, payment_customer, payment_staff, payment_store, payment_film, payment_category, customer_city, customer_country]
+    validation: [V03_payment_integrity]
+    change_log: [{ version: 1.0.0, date: 2026-11-01, change: initial }, { version: 1.1.0, date: 2026-11-10, change: "added combinable_with and allowed_dimensions (spec 9.3.1, 10.1)" }]

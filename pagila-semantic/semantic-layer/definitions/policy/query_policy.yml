@@ -1,0 +1,15 @@
+name: query_policy
+label: Query policy
+description: Resource limits read by every service (spec 14.2).
+version: 1.0.0
+status: validated
+business_owner: srinivasa.senapathi
+technical_owner: srinivasa.senapathi
+change_log:
+  - { version: 1.0.0, date: 2026-11-10, change: "initial: limits from spec 14.2" }
+max_measures_per_query: 5
+max_dimensions_per_query: 8
+default_limit: 1000
+max_rows: 10000
+max_joins: 10
+max_fan_out_dimensions: 1

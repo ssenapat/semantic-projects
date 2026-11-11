@@ -1,0 +1,10 @@
+.git-token.txt
+.venv/
+.run/
+logs/
+.DS_Store
+__pycache__/
+.pytest_cache/
+*.egg-info/
+.env
+data/scripts/2026*/

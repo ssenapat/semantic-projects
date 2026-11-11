@@ -1,0 +1,135 @@
+# One row per rental (spec 9.2). Dated by rental_date.
+name: rental_activity
+label: Rental Activity
+description: Rentals of film copies by customers, with returned and open status and rental duration.
+version: 1.1.0
+status: validated
+validated_on: 2026-11-10
+validation_evidence: validation/results/latest.json
+business_owner: srinivasa.senapathi
+technical_owner: srinivasa.senapathi
+source: rental
+grain: one row per rental
+time_dimension: rental_date
+null_handling: Group-by on nullable columns shows NULL as the label Unknown; averages ignore NULL; open rentals are excluded from duration measures.
+change_log:
+  - { version: 1.0.0, date: 2026-11-01, change: initial definition from specification }
+  - { version: 1.0.0, date: 2026-11-01, change: "promoted draft to validated after validation run: all error-level checks passed" }
+  - { version: 1.1.0, date: 2026-11-10, change: "added combinable_with and allowed_dimensions (spec 9.3.1, 10.1)" }
+
+base: { table: public.rental, alias: r }
+always_joined: []
+
+joins:   # declared in dependency order; a join is added only when something requested needs it
+  - { alias: i,  table: public.inventory, condition: "i.inventory_id = r.inventory_id", parent: r,  relationship: rental_inventory }
+  - { alias: f,  table: public.film,      condition: "f.film_id = i.film_id",           parent: i,  relationship: inventory_film }
+  - { alias: l,  table: public.language,  condition: "l.language_id = f.language_id",   parent: f,  relationship: film_language }
+  - { alias: w,  derived: film_category_weight, type: left, condition: "w.film_id = f.film_id", parent: f, relationship: film_category_film }
+  - { alias: c,  table: public.category,  type: left, condition: "c.category_id = w.category_id", parent: w, relationship: film_category_category }
+  - { alias: fa, table: public.film_actor, condition: "fa.film_id = f.film_id",         parent: f,  relationship: film_actor_film, fan_out: true }
+  - { alias: ac, table: public.actor,     condition: "ac.actor_id = fa.actor_id",       parent: fa, relationship: film_actor_actor, fan_out: true }
+  - { alias: cu, table: public.customer,  condition: "cu.customer_id = r.customer_id",  parent: r,  relationship: rental_customer }
+  - { alias: ad, table: public.address,   condition: "ad.address_id = cu.address_id",   parent: cu, relationship: customer_address }
+  - { alias: ci, table: public.city,      condition: "ci.city_id = ad.city_id",         parent: ad, relationship: address_city }
+  - { alias: co, table: public.country,   condition: "co.country_id = ci.country_id",   parent: ci, relationship: city_country }
+
+allocation:            # equal allocation of a film across its categories (spec 7.4)
+  alias: w
+  weight: "COALESCE(w.weight, 1)"
+  trigger_alias: c     # applied whenever the category join is present
+
+dimensions:
+  - { name: rental_date,   label: Rental Date, description: "When the copy was rented.", type: time, expression: "r.rental_date", granularities: [day, week, month, quarter, year], requires: [] }
+  - { name: rental_hour,   label: Rental Hour (UTC), description: "Hour of day of the rental, 0 to 23, in UTC.", type: categorical, expression: "EXTRACT(hour FROM (r.rental_date AT TIME ZONE 'UTC'))::int", requires: [], data_type: integer }
+  - { name: day_of_week,   label: Day of Week (UTC), description: "ISO day of week, 1 Monday to 7 Sunday, in UTC.", type: categorical, expression: "EXTRACT(isodow FROM (r.rental_date AT TIME ZONE 'UTC'))::int", requires: [], data_type: integer }
+  - { name: is_returned,   label: Returned, description: "True when the rental has a return date.", type: categorical, expression: "(r.return_date IS NOT NULL)", requires: [], data_type: boolean }
+  - { name: store_id,      label: Store, description: "Store that holds the rented copy (not the staff member's store, spec 7.5).", type: categorical, expression: "i.store_id", requires: [i], data_type: integer }
+  - { name: film_title,    label: Film, description: "Film title (unique in this database).", type: categorical, expression: "f.title", requires: [f] }
+  - { name: rating,        label: MPAA Rating, description: "G, PG, PG-13, R or NC-17.", type: categorical, expression: "f.rating::text", null_policy: label_unknown, requires: [f] }
+  - { name: film_language, label: Film Language, description: "Spoken language of the film (not the original language).", type: categorical, expression: "l.name", requires: [l] }
+  - { name: category,      label: Category, description: "Film category. A film in n categories is allocated 1/n to each, so measures are allocated and add up to the total.", type: categorical, expression: "COALESCE(c.name, 'Uncategorised')", requires: [c], allocated: true }
+  - { name: actor_name,    label: Actor, description: "Actor in the film. A rental counts fully for every actor of the film, so actor totals do not add up (fan-out).", type: categorical, expression: "ac.first_name || ' ' || ac.last_name", requires: [ac], fan_out: true }
+  - { name: customer_id,   label: Customer ID, description: "Customer key, use with customer_name because names are not unique.", type: categorical, expression: "r.customer_id", requires: [], data_type: integer }
+  - { name: customer_name, label: Customer, description: "Customer first and last name.", type: categorical, expression: "cu.first_name || ' ' || cu.last_name", requires: [cu], personal_data: true }
+  - { name: customer_city, label: Customer City, description: "City of the customer's address. City names repeat across countries, so pair with customer_country.", type: categorical, expression: "ci.city", requires: [ci] }
+  - { name: customer_country, label: Customer Country, description: "Country of the customer's address.", type: categorical, expression: "co.country", requires: [co] }
+
+measures:
+  - name: rental_count
+    label: Rentals
+    description: Number of distinct rentals.
+    unit: count
+    sql: "COUNT(DISTINCT r.rental_id)"
+    allocated_sql: "SUM(COALESCE(w.weight, 1))"
+    requires: []
+    status: validated
+    version: 1.1.0
+    combinable_with: rental_activity
+    allowed_dimensions: [rental_date, rental_hour, day_of_week, is_returned, store_id, film_title, rating, film_language, category, actor_name, customer_id, customer_name, customer_city, customer_country]
+    validation: [V01_row_counts, X_allocated_rentals_sum]
+    change_log: [{ version: 1.0.0, date: 2026-11-01, change: initial }, { version: 1.1.0, date: 2026-11-10, change: "added combinable_with and allowed_dimensions (spec 9.3.1, 10.1)" }]
+  - name: returned_count
+    label: Returned Rentals
+    description: Rentals that have a return date.
+    unit: count
+    sql: "COUNT(DISTINCT r.rental_id) FILTER (WHERE r.return_date IS NOT NULL)"
+    allocated_sql: "SUM(COALESCE(w.weight, 1)) FILTER (WHERE r.return_date IS NOT NULL)"
+    requires: []
+    status: validated
+    version: 1.1.0
+    combinable_with: rental_activity
+    allowed_dimensions: [rental_date, rental_hour, day_of_week, is_returned, store_id, film_title, rating, film_language, category, actor_name, customer_id, customer_name, customer_city, customer_country]
+    validation: [V03_payment_integrity]
+    change_log: [{ version: 1.0.0, date: 2026-11-01, change: initial }, { version: 1.1.0, date: 2026-11-10, change: "added combinable_with and allowed_dimensions (spec 9.3.1, 10.1)" }]
+  - name: open_rental_count
+    label: Open Rentals
+    description: Rentals with no return date.
+    unit: count
+    sql: "COUNT(DISTINCT r.rental_id) FILTER (WHERE r.return_date IS NULL)"
+    allocated_sql: "SUM(COALESCE(w.weight, 1)) FILTER (WHERE r.return_date IS NULL)"
+    requires: []
+    status: validated
+    version: 1.1.0
+    combinable_with: rental_activity
+    allowed_dimensions: [rental_date, rental_hour, day_of_week, is_returned, store_id, film_title, rating, film_language, category, actor_name, customer_id, customer_name, customer_city, customer_country]
+    validation: [V03_payment_integrity]
+    change_log: [{ version: 1.0.0, date: 2026-11-01, change: initial }, { version: 1.1.0, date: 2026-11-10, change: "added combinable_with and allowed_dimensions (spec 9.3.1, 10.1)" }]
+  - name: active_customer_count
+    label: Renting Customers
+    description: Distinct customers who rented. A distinct count is not allocated by category, so it does not add up across categories.
+    unit: count
+    sql: "COUNT(DISTINCT r.customer_id)"
+    requires: []
+    status: validated
+    version: 1.1.0
+    combinable_with: rental_activity
+    allowed_dimensions: [rental_date, rental_hour, day_of_week, is_returned, store_id, film_title, rating, film_language, category, actor_name, customer_id, customer_name, customer_city, customer_country]
+    validation: [V01_row_counts]
+    change_log: [{ version: 1.0.0, date: 2026-11-01, change: initial }, { version: 1.1.0, date: 2026-11-10, change: "added combinable_with and allowed_dimensions (spec 9.3.1, 10.1)" }]
+  - name: avg_rental_days
+    label: Average Rental Days
+    description: Average days between rental and return, returned rentals only.
+    unit: days
+    sql: "AVG(EXTRACT(epoch FROM (r.return_date - r.rental_date)) / 86400.0) FILTER (WHERE r.return_date IS NOT NULL)"
+    allocated_sql: "SUM(EXTRACT(epoch FROM (r.return_date - r.rental_date)) / 86400.0 * COALESCE(w.weight, 1)) FILTER (WHERE r.return_date IS NOT NULL) / NULLIF(SUM(COALESCE(w.weight, 1)) FILTER (WHERE r.return_date IS NOT NULL), 0)"
+    requires: []
+    status: validated
+    version: 1.1.0
+    combinable_with: rental_activity
+    allowed_dimensions: [rental_date, rental_hour, day_of_week, is_returned, store_id, film_title, rating, film_language, category, actor_name, customer_id, customer_name, customer_city, customer_country]
+    validation: [V03_payment_integrity]
+    change_log: [{ version: 1.0.0, date: 2026-11-01, change: initial }, { version: 1.1.0, date: 2026-11-10, change: "added combinable_with and allowed_dimensions (spec 9.3.1, 10.1)" }]
+  - name: late_return_count
+    label: Late Returns
+    description: PROPOSED rule, not approved (spec 7.10.1). Returned rentals kept longer than the film's rental_duration days.
+    unit: count
+    sql: "COUNT(DISTINCT r.rental_id) FILTER (WHERE r.return_date IS NOT NULL AND (r.return_date - r.rental_date) > f.rental_duration * INTERVAL '1 day')"
+    allocated_sql: "SUM(COALESCE(w.weight, 1)) FILTER (WHERE r.return_date IS NOT NULL AND (r.return_date - r.rental_date) > f.rental_duration * INTERVAL '1 day')"
+    requires: [f]
+    status: draft
+    expose: false
+    version: 0.2.0
+    combinable_with: rental_activity
+    allowed_dimensions: [rental_date, rental_hour, day_of_week, is_returned, store_id, film_title, rating, film_language, category, actor_name, customer_id, customer_name, customer_city, customer_country]
+    validation: []
+    change_log: [{ version: 0.1.0, date: 2026-11-01, change: "proposed; stays draft and unexposed until the business owner approves a rule" }, { version: 0.2.0, date: 2026-11-10, change: "added combinable_with and allowed_dimensions (spec 9.3.1, 10.1)" }]

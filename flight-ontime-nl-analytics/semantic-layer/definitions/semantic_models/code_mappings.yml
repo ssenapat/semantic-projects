@@ -1,0 +1,13 @@
+version: 1
+mappings:
+  # Q5: carrier display names are not in the database; never guessed, values stay empty until approved.
+  - name: carrier_display_names
+    status: draft
+    keys_from: ontime.carrier.unique_carrier
+    values: {}
+    unmapped_policy: show_code
+  - name: cancellation_reasons
+    status: draft
+    keys_from: ontime.flight.cancellation_code
+    values: {A: Carrier, B: Weather, C: National Air System, D: Security}
+    unmapped_policy: show_code

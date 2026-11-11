@@ -1,0 +1,163 @@
+{
+ "question": "Show passenger email addresses",
+ "semantic_context": {
+  "ambiguity_rules": [
+   {
+    "alternatives": [],
+    "question_template": "Not available in the data: no delay minutes, passengers, seats, revenue/fares, miles, clock times, tail numbers, marketing carrier or cargo data. (terms: average delay minutes, avg delay minutes, mean delay minutes, total delay minutes, delay minutes, arrival delay minutes, departure delay minutes, passenger count, passengers, load factor, revenue, fare, fares, average fare, seat capacity, seats, available seats, distance miles, flight distance miles, miles, total miles, flight time, air time, elapsed time, tail number, aircraft utilisation, aircraft utilization, tail utilisation, flight number, scheduled departure time, actual departure time, scheduled arrival time, actual arrival time, marketing carrier, codeshare, cargo, time zone)",
+    "required_action": "reject",
+    "trigger": "refers_to_unavailable_data"
+   },
+   {
+    "alternatives": [
+     "departure_delay_rate",
+     "arrival_delay_rate",
+     "departure_delayed_flight_count",
+     "arrival_delayed_flight_count"
+    ],
+    "question_template": "Which did you mean: departure delay rate, arrival delay rate, departure delayed flight count, arrival delayed flight count?",
+    "required_action": "clarify",
+    "trigger": "delay_direction_unspecified"
+   },
+   {
+    "alternatives": [
+     "origin_airport_code",
+     "destination_airport_code",
+     "origin_city",
+     "destination_city",
+     "origin_state",
+     "destination_state"
+    ],
+    "question_template": "Which did you mean: origin airport code, destination airport code, origin city, destination city, origin state, destination state?",
+    "required_action": "clarify",
+    "trigger": "airport_role_unspecified"
+   },
+   {
+    "alternatives": [],
+    "question_template": "Carrier display names are not in the database and no approved mapping exists yet. (terms: carrier name, carrier display name, airline name)",
+    "required_action": "reject",
+    "trigger": "mapping_not_approved"
+   }
+  ],
+  "catalog_version": "sp1-5395c3cd5bf9",
+  "dimensions": [],
+  "glossary": [
+   {
+    "ambiguity_action": "reject",
+    "clarification_question_template": null,
+    "maps_to": [],
+    "meaning": "Not available in the data: no delay minutes, passengers, seats, revenue/fares, miles, clock times, tail numbers, marketing carrier or cargo data.",
+    "term": "passengers"
+   },
+   {
+    "ambiguity_action": "reject",
+    "clarification_question_template": null,
+    "maps_to": [],
+    "meaning": "Not available in the data: no delay minutes, passengers, seats, revenue/fares, miles, clock times, tail numbers, marketing carrier or cargo data.",
+    "term": "passenger count"
+   },
+   {
+    "ambiguity_action": "reject",
+    "clarification_question_template": null,
+    "maps_to": [],
+    "meaning": "Not available in the data: no delay minutes, passengers, seats, revenue/fares, miles, clock times, tail numbers, marketing carrier or cargo data.",
+    "term": "cargo"
+   },
+   {
+    "ambiguity_action": "reject",
+    "clarification_question_template": null,
+    "maps_to": [],
+    "meaning": "Not available in the data: no delay minutes, passengers, seats, revenue/fares, miles, clock times, tail numbers, marketing carrier or cargo data.",
+    "term": "codeshare"
+   },
+   {
+    "ambiguity_action": "reject",
+    "clarification_question_template": null,
+    "maps_to": [],
+    "meaning": "Not available in the data: no delay minutes, passengers, seats, revenue/fares, miles, clock times, tail numbers, marketing carrier or cargo data.",
+    "term": "fare"
+   },
+   {
+    "ambiguity_action": "reject",
+    "clarification_question_template": null,
+    "maps_to": [],
+    "meaning": "Not available in the data: no delay minutes, passengers, seats, revenue/fares, miles, clock times, tail numbers, marketing carrier or cargo data.",
+    "term": "fares"
+   },
+   {
+    "ambiguity_action": "reject",
+    "clarification_question_template": null,
+    "maps_to": [],
+    "meaning": "Not available in the data: no delay minutes, passengers, seats, revenue/fares, miles, clock times, tail numbers, marketing carrier or cargo data.",
+    "term": "flight number"
+   },
+   {
+    "ambiguity_action": "reject",
+    "clarification_question_template": null,
+    "maps_to": [],
+    "meaning": "Not available in the data: no delay minutes, passengers, seats, revenue/fares, miles, clock times, tail numbers, marketing carrier or cargo data.",
+    "term": "miles"
+   },
+   {
+    "ambiguity_action": "reject",
+    "clarification_question_template": null,
+    "maps_to": [],
+    "meaning": "Not available in the data: no delay minutes, passengers, seats, revenue/fares, miles, clock times, tail numbers, marketing carrier or cargo data.",
+    "term": "revenue"
+   },
+   {
+    "ambiguity_action": "reject",
+    "clarification_question_template": null,
+    "maps_to": [],
+    "meaning": "Not available in the data: no delay minutes, passengers, seats, revenue/fares, miles, clock times, tail numbers, marketing carrier or cargo data.",
+    "term": "seats"
+   },
+   {
+    "ambiguity_action": "reject",
+    "clarification_question_template": null,
+    "maps_to": [],
+    "meaning": "Not available in the data: no delay minutes, passengers, seats, revenue/fares, miles, clock times, tail numbers, marketing carrier or cargo data.",
+    "term": "tail number"
+   },
+   {
+    "ambiguity_action": "reject",
+    "clarification_question_template": null,
+    "maps_to": [],
+    "meaning": "Not available in the data: no delay minutes, passengers, seats, revenue/fares, miles, clock times, tail numbers, marketing carrier or cargo data.",
+    "term": "total miles"
+   },
+   {
+    "ambiguity_action": "reject",
+    "clarification_question_template": null,
+    "maps_to": [],
+    "meaning": "Not available in the data: no delay minutes, passengers, seats, revenue/fares, miles, clock times, tail numbers, marketing carrier or cargo data.",
+    "term": "air time"
+   },
+   {
+    "ambiguity_action": "reject",
+    "clarification_question_template": null,
+    "maps_to": [],
+    "meaning": "Not available in the data: no delay minutes, passengers, seats, revenue/fares, miles, clock times, tail numbers, marketing carrier or cargo data.",
+    "term": "aircraft utilisation"
+   },
+   {
+    "ambiguity_action": "reject",
+    "clarification_question_template": null,
+    "maps_to": [],
+    "meaning": "Not available in the data: no delay minutes, passengers, seats, revenue/fares, miles, clock times, tail numbers, marketing carrier or cargo data.",
+    "term": "aircraft utilization"
+   }
+  ],
+  "metrics": [],
+  "request_id": "fd7c5746490e4192a43a25585d927fba",
+  "response_rules": [
+   "Answer only with a metric, dimensions and filters listed in this context.",
+   "If the question is ambiguous, ask a clarifying question and never guess.",
+   "If the question needs data that is not available, say it is unsupported.",
+   "Never produce SQL, table names, column names or joins."
+  ],
+  "selected_domains": [
+   "flight_operations"
+  ]
+ }
+}

@@ -1,0 +1,54 @@
+version: 1
+connection:
+  engine: postgresql
+  database: "tran-stats"
+  default_schema: ontime
+  credentials: env
+  read_only: true
+sources:
+  - name: flight_facts
+    physical_object: ontime.flight
+    object_type: table
+    usage: queryable
+    grain: "one row per flight leg (flight_id)"
+    primary_key: [flight_id]
+    classification: internal
+    status: validated
+    business_owner: "<team_or_role>"
+    technical_owner: "<data_platform_owner>"
+    freshness: "static load; currently 2026-01-01..2026-01-31"
+    time_column: fl_date
+  - name: carriers
+    physical_object: ontime.carrier
+    object_type: table
+    usage: queryable
+    grain: "one row per carrier"
+    primary_key: [airline_id]
+    classification: internal
+    status: validated
+    freshness: "static load"
+  - name: airports
+    physical_object: ontime.airport
+    object_type: table
+    usage: queryable
+    grain: "one row per airport"
+    primary_key: [airport_id]
+    classification: internal
+    status: validated
+    freshness: "static load"
+  - name: ref_carrier_monthly_performance
+    physical_object: ontime.v_carrier_monthly_performance
+    object_type: view
+    usage: reconciliation_only
+    grain: "one row per carrier per month"
+    classification: internal
+    status: validated
+    freshness: "derived from ontime.flight"
+  - name: ref_route_summary
+    physical_object: ontime.v_route_summary
+    object_type: view
+    usage: reconciliation_only
+    grain: "one row per origin code, origin city, destination city, destination airport id"
+    classification: internal
+    status: validated
+    freshness: "derived from ontime.flight"

@@ -1,0 +1,20 @@
+# Declared join paths (spec 9.3). Every join in a semantic model must reference one of these by name.
+relationships:
+  - { name: rental_inventory,        from: rental.inventory_id,   to: inventory.inventory_id, type: many_to_one }
+  - { name: rental_customer,         from: rental.customer_id,    to: customer.customer_id,   type: many_to_one }
+  - { name: rental_staff,            from: rental.staff_id,       to: staff.staff_id,         type: many_to_one }
+  - { name: payment_rental,          from: payment.rental_id,     to: rental.rental_id,       type: many_to_one, note: "749 rentals have no payment (baseline)" }
+  - { name: payment_customer,        from: payment.customer_id,   to: customer.customer_id,   type: many_to_one }
+  - { name: payment_staff,           from: payment.staff_id,      to: staff.staff_id,         type: many_to_one }
+  - { name: inventory_film,          from: inventory.film_id,     to: film.film_id,           type: many_to_one }
+  - { name: inventory_store,         from: inventory.store_id,    to: store.store_id,         type: many_to_one }
+  - { name: film_language,           from: film.language_id,      to: language.language_id,   type: many_to_one }
+  - { name: film_category_film,      from: film_category.film_id, to: film.film_id,           type: many_to_one, allocation: equal, weight_source: film_category_weight }
+  - { name: film_category_category,  from: film_category.category_id, to: category.category_id, type: many_to_one, allocation: equal, weight_source: film_category_weight }
+  - { name: film_actor_film,         from: film_actor.film_id,    to: film.film_id,           type: many_to_one, fan_out: true }
+  - { name: film_actor_actor,        from: film_actor.actor_id,   to: actor.actor_id,         type: many_to_one, fan_out: true }
+  - { name: customer_address,        from: customer.address_id,   to: address.address_id,     type: many_to_one }
+  - { name: customer_store,          from: customer.store_id,     to: store.store_id,         type: many_to_one }
+  - { name: store_address,           from: store.address_id,      to: address.address_id,     type: many_to_one }
+  - { name: address_city,            from: address.city_id,       to: city.city_id,           type: many_to_one }
+  - { name: city_country,            from: city.country_id,       to: country.country_id,     type: many_to_one }

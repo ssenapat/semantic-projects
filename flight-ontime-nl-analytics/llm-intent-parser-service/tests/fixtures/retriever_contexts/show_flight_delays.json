@@ -1,0 +1,742 @@
+{
+ "question": "Show flight delays",
+ "semantic_context": {
+  "ambiguity_rules": [
+   {
+    "alternatives": [
+     "departure_delay_rate",
+     "arrival_delay_rate",
+     "departure_delayed_flight_count",
+     "arrival_delayed_flight_count"
+    ],
+    "question_template": "Which did you mean: departure delay rate, arrival delay rate, departure delayed flight count, arrival delayed flight count?",
+    "required_action": "clarify",
+    "trigger": "delay_direction_unspecified"
+   },
+   {
+    "alternatives": [],
+    "question_template": "Not available in the data: no delay minutes, passengers, seats, revenue/fares, miles, clock times, tail numbers, marketing carrier or cargo data. (terms: average delay minutes, avg delay minutes, mean delay minutes, total delay minutes, delay minutes, arrival delay minutes, departure delay minutes, passenger count, passengers, load factor, revenue, fare, fares, average fare, seat capacity, seats, available seats, distance miles, flight distance miles, miles, total miles, flight time, air time, elapsed time, tail number, aircraft utilisation, aircraft utilization, tail utilisation, flight number, scheduled departure time, actual departure time, scheduled arrival time, actual arrival time, marketing carrier, codeshare, cargo, time zone)",
+    "required_action": "reject",
+    "trigger": "refers_to_unavailable_data"
+   },
+   {
+    "alternatives": [
+     "origin_airport_code",
+     "destination_airport_code",
+     "origin_city",
+     "destination_city",
+     "origin_state",
+     "destination_state"
+    ],
+    "question_template": "Which did you mean: origin airport code, destination airport code, origin city, destination city, origin state, destination state?",
+    "required_action": "clarify",
+    "trigger": "airport_role_unspecified"
+   },
+   {
+    "alternatives": [],
+    "question_template": "Carrier display names are not in the database and no approved mapping exists yet. (terms: carrier name, carrier display name, airline name)",
+    "required_action": "reject",
+    "trigger": "mapping_not_approved"
+   }
+  ],
+  "catalog_version": "sp1-5395c3cd5bf9",
+  "dimensions": [
+   {
+    "allowed_operators": [
+     "equals",
+     "between"
+    ],
+    "allowed_time_grains": [
+     "day",
+     "week",
+     "month"
+    ],
+    "clarification_notes": [],
+    "description": "Flight date",
+    "label": "Flight date",
+    "name": "flight_date",
+    "synonyms": [
+     "Flight date",
+     "date",
+     "day",
+     "daily"
+    ],
+    "type": "time"
+   },
+   {
+    "allowed_operators": [
+     "equals",
+     "not_equals",
+     "in",
+     "not_in"
+    ],
+    "allowed_time_grains": [],
+    "clarification_notes": [],
+    "description": "Arrival time block",
+    "label": "Arrival time block",
+    "name": "arrival_time_block",
+    "synonyms": [
+     "Arrival time block",
+     "arrival time",
+     "time of arrival",
+     "arrival hour"
+    ],
+    "type": "categorical"
+   },
+   {
+    "allowed_operators": [
+     "equals",
+     "not_equals",
+     "in",
+     "not_in"
+    ],
+    "allowed_time_grains": [],
+    "clarification_notes": [],
+    "description": "Carrier code",
+    "label": "Carrier code",
+    "name": "carrier_code",
+    "synonyms": [
+     "Carrier code",
+     "airline",
+     "carrier",
+     "airline code"
+    ],
+    "type": "categorical"
+   },
+   {
+    "allowed_operators": [
+     "equals",
+     "not_equals",
+     "in",
+     "not_in"
+    ],
+    "allowed_time_grains": [],
+    "clarification_notes": [],
+    "description": "Day of week",
+    "label": "Day of week",
+    "name": "day_of_week",
+    "synonyms": [
+     "Day of week",
+     "weekday",
+     "day of the week"
+    ],
+    "type": "categorical"
+   },
+   {
+    "allowed_operators": [
+     "equals",
+     "not_equals",
+     "in",
+     "not_in"
+    ],
+    "allowed_time_grains": [],
+    "clarification_notes": [],
+    "description": "Departure time block",
+    "label": "Departure time block",
+    "name": "departure_time_block",
+    "synonyms": [
+     "Departure time block",
+     "departure time",
+     "time of departure",
+     "departure hour"
+    ],
+    "type": "categorical"
+   },
+   {
+    "allowed_operators": [
+     "equals",
+     "not_equals",
+     "in",
+     "not_in"
+    ],
+    "allowed_time_grains": [],
+    "clarification_notes": [],
+    "description": "Destination airport code",
+    "label": "Destination airport code",
+    "name": "destination_airport_code",
+    "synonyms": [
+     "Destination airport code",
+     "arrival airport",
+     "destination airport",
+     "to airport"
+    ],
+    "type": "categorical"
+   },
+   {
+    "allowed_operators": [
+     "equals",
+     "not_equals",
+     "in",
+     "not_in"
+    ],
+    "allowed_time_grains": [],
+    "clarification_notes": [],
+    "description": "Destination city",
+    "label": "Destination city",
+    "name": "destination_city",
+    "synonyms": [
+     "Destination city",
+     "arrival city"
+    ],
+    "type": "categorical"
+   },
+   {
+    "allowed_operators": [
+     "equals",
+     "not_equals",
+     "in",
+     "not_in"
+    ],
+    "allowed_time_grains": [],
+    "clarification_notes": [],
+    "description": "Destination state",
+    "label": "Destination state",
+    "name": "destination_state",
+    "synonyms": [
+     "Destination state",
+     "arrival state"
+    ],
+    "type": "categorical"
+   },
+   {
+    "allowed_operators": [
+     "equals",
+     "not_equals",
+     "in",
+     "not_in"
+    ],
+    "allowed_time_grains": [],
+    "clarification_notes": [],
+    "description": "constant (1) in current data",
+    "label": "Month",
+    "name": "month",
+    "synonyms": [
+     "Month",
+     "monthly",
+     "by month"
+    ],
+    "type": "categorical"
+   },
+   {
+    "allowed_operators": [
+     "equals",
+     "not_equals",
+     "in",
+     "not_in"
+    ],
+    "allowed_time_grains": [],
+    "clarification_notes": [],
+    "description": "Origin airport code",
+    "label": "Origin airport code",
+    "name": "origin_airport_code",
+    "synonyms": [
+     "Origin airport code",
+     "departure airport",
+     "origin airport",
+     "from airport",
+     "departing airport"
+    ],
+    "type": "categorical"
+   },
+   {
+    "allowed_operators": [
+     "equals",
+     "not_equals",
+     "in",
+     "not_in"
+    ],
+    "allowed_time_grains": [],
+    "clarification_notes": [],
+    "description": "Origin city",
+    "label": "Origin city",
+    "name": "origin_city",
+    "synonyms": [
+     "Origin city",
+     "departure city",
+     "departing city"
+    ],
+    "type": "categorical"
+   },
+   {
+    "allowed_operators": [
+     "equals",
+     "not_equals",
+     "in",
+     "not_in"
+    ],
+    "allowed_time_grains": [],
+    "clarification_notes": [],
+    "description": "Origin state",
+    "label": "Origin state",
+    "name": "origin_state",
+    "synonyms": [
+     "Origin state",
+     "departure state",
+     "departing state"
+    ],
+    "type": "categorical"
+   },
+   {
+    "allowed_operators": [
+     "equals",
+     "not_equals",
+     "in",
+     "not_in"
+    ],
+    "allowed_time_grains": [],
+    "clarification_notes": [],
+    "description": "constant (1) in current data",
+    "label": "Quarter",
+    "name": "quarter",
+    "synonyms": [
+     "Quarter",
+     "quarterly"
+    ],
+    "type": "categorical"
+   }
+  ],
+  "glossary": [
+   {
+    "ambiguity_action": "clarify",
+    "clarification_question_template": "Which did you mean: departure delay rate, arrival delay rate, departure delayed flight count, arrival delayed flight count?",
+    "maps_to": [
+     "departure_delay_rate",
+     "arrival_delay_rate",
+     "departure_delayed_flight_count",
+     "arrival_delayed_flight_count"
+    ],
+    "meaning": "Ambiguous term: delay direction unspecified",
+    "term": "delays"
+   },
+   {
+    "ambiguity_action": "none",
+    "clarification_question_template": null,
+    "maps_to": [
+     "flight_count"
+    ],
+    "meaning": "Means the metric Flight count",
+    "term": "flights"
+   },
+   {
+    "ambiguity_action": "none",
+    "clarification_question_template": null,
+    "maps_to": [
+     "flight_count"
+    ],
+    "meaning": "Means the metric Flight count",
+    "term": "number of flights"
+   },
+   {
+    "ambiguity_action": "none",
+    "clarification_question_template": null,
+    "maps_to": [
+     "flight_count"
+    ],
+    "meaning": "Means the metric Flight count",
+    "term": "total flights"
+   },
+   {
+    "ambiguity_action": "none",
+    "clarification_question_template": null,
+    "maps_to": [
+     "flight_count"
+    ],
+    "meaning": "Means the metric Flight count",
+    "term": "flight volume"
+   },
+   {
+    "ambiguity_action": "none",
+    "clarification_question_template": null,
+    "maps_to": [
+     "cancelled_flight_count"
+    ],
+    "meaning": "Means the metric Cancelled flight count",
+    "term": "canceled flights"
+   },
+   {
+    "ambiguity_action": "none",
+    "clarification_question_template": null,
+    "maps_to": [
+     "cancelled_flight_count"
+    ],
+    "meaning": "Means the metric Cancelled flight count",
+    "term": "cancelled flights"
+   },
+   {
+    "ambiguity_action": "none",
+    "clarification_question_template": null,
+    "maps_to": [
+     "operated_flight_count"
+    ],
+    "meaning": "Means the metric Operated flight count",
+    "term": "completed flights"
+   },
+   {
+    "ambiguity_action": "none",
+    "clarification_question_template": null,
+    "maps_to": [
+     "diverted_flight_count"
+    ],
+    "meaning": "Means the metric Diverted flight count",
+    "term": "diverted flights"
+   },
+   {
+    "ambiguity_action": "none",
+    "clarification_question_template": null,
+    "maps_to": [
+     "operated_flight_count"
+    ],
+    "meaning": "Means the metric Operated flight count",
+    "term": "flights operated"
+   },
+   {
+    "ambiguity_action": "none",
+    "clarification_question_template": null,
+    "maps_to": [
+     "operated_flight_count"
+    ],
+    "meaning": "Means the metric Operated flight count",
+    "term": "operated flights"
+   },
+   {
+    "ambiguity_action": "clarify",
+    "clarification_question_template": "Which did you mean: departure delay rate, arrival delay rate, departure delayed flight count, arrival delayed flight count?",
+    "maps_to": [
+     "departure_delay_rate",
+     "arrival_delay_rate",
+     "departure_delayed_flight_count",
+     "arrival_delayed_flight_count"
+    ],
+    "meaning": "Ambiguous term: delay direction unspecified",
+    "term": "delayed flights"
+   },
+   {
+    "ambiguity_action": "clarify",
+    "clarification_question_template": "Which did you mean: departure delay rate, arrival delay rate, departure delayed flight count, arrival delayed flight count?",
+    "maps_to": [
+     "departure_delay_rate",
+     "arrival_delay_rate",
+     "departure_delayed_flight_count",
+     "arrival_delayed_flight_count"
+    ],
+    "meaning": "Ambiguous term: delay direction unspecified",
+    "term": "late flights"
+   },
+   {
+    "ambiguity_action": "clarify",
+    "clarification_question_template": "Which did you mean: departure delay rate, arrival delay rate, departure delayed flight count, arrival delayed flight count?",
+    "maps_to": [
+     "departure_delay_rate",
+     "arrival_delay_rate",
+     "departure_delayed_flight_count",
+     "arrival_delayed_flight_count"
+    ],
+    "meaning": "Ambiguous term: delay direction unspecified",
+    "term": "delayed flight count"
+   },
+   {
+    "ambiguity_action": "none",
+    "clarification_question_template": null,
+    "maps_to": [
+     "cancellation_rate"
+    ],
+    "meaning": "Means the metric Cancellation rate",
+    "term": "share of flights cancelled"
+   }
+  ],
+  "metrics": [
+   {
+    "allowed_dimensions": [
+     "flight_date",
+     "day_of_week",
+     "month",
+     "quarter",
+     "departure_time_block",
+     "arrival_time_block",
+     "carrier_code",
+     "origin_airport_code",
+     "origin_city",
+     "origin_state",
+     "destination_airport_code",
+     "destination_city",
+     "destination_state"
+    ],
+    "allowed_time_grains": [
+     "day",
+     "week",
+     "month"
+    ],
+    "clarification_notes": [],
+    "combinable_with": "flight_operations",
+    "description": "Flight count",
+    "domain": "flight_operations",
+    "label": "Flight count",
+    "name": "flight_count",
+    "synonyms": [
+     "Flight count",
+     "number of flights",
+     "total flights",
+     "flights",
+     "flight volume"
+    ],
+    "time_dimension": "flight_date"
+   },
+   {
+    "allowed_dimensions": [
+     "flight_date",
+     "day_of_week",
+     "month",
+     "quarter",
+     "departure_time_block",
+     "arrival_time_block",
+     "carrier_code",
+     "origin_airport_code",
+     "origin_city",
+     "origin_state",
+     "destination_airport_code",
+     "destination_city",
+     "destination_state"
+    ],
+    "allowed_time_grains": [
+     "day",
+     "week",
+     "month"
+    ],
+    "clarification_notes": [],
+    "combinable_with": "flight_operations",
+    "description": "Number of flight legs that were not cancelled.",
+    "domain": "flight_operations",
+    "label": "Operated flight count",
+    "name": "operated_flight_count",
+    "synonyms": [
+     "Operated flight count",
+     "operated flights",
+     "flights operated",
+     "completed flights"
+    ],
+    "time_dimension": "flight_date"
+   },
+   {
+    "allowed_dimensions": [
+     "flight_date",
+     "day_of_week",
+     "month",
+     "quarter",
+     "departure_time_block",
+     "arrival_time_block",
+     "carrier_code",
+     "origin_airport_code",
+     "origin_city",
+     "origin_state",
+     "destination_airport_code",
+     "destination_city",
+     "destination_state"
+    ],
+    "allowed_time_grains": [
+     "day",
+     "week",
+     "month"
+    ],
+    "clarification_notes": [],
+    "combinable_with": "flight_operations",
+    "description": "Number of cancelled flight legs.",
+    "domain": "flight_operations",
+    "label": "Cancelled flight count",
+    "name": "cancelled_flight_count",
+    "synonyms": [
+     "Cancelled flight count",
+     "cancellations",
+     "cancelled flights",
+     "canceled flights",
+     "number of cancellations"
+    ],
+    "time_dimension": "flight_date"
+   },
+   {
+    "allowed_dimensions": [
+     "flight_date",
+     "day_of_week",
+     "month",
+     "quarter",
+     "departure_time_block",
+     "arrival_time_block",
+     "carrier_code",
+     "origin_airport_code",
+     "origin_city",
+     "origin_state",
+     "destination_airport_code",
+     "destination_city",
+     "destination_state"
+    ],
+    "allowed_time_grains": [
+     "day",
+     "week",
+     "month"
+    ],
+    "clarification_notes": [],
+    "combinable_with": "flight_operations",
+    "description": "Number of diverted flight legs.",
+    "domain": "flight_operations",
+    "label": "Diverted flight count",
+    "name": "diverted_flight_count",
+    "synonyms": [
+     "Diverted flight count",
+     "diversions",
+     "diverted flights",
+     "number of diversions"
+    ],
+    "time_dimension": "flight_date"
+   },
+   {
+    "allowed_dimensions": [
+     "flight_date",
+     "day_of_week",
+     "month",
+     "quarter",
+     "departure_time_block",
+     "arrival_time_block",
+     "carrier_code",
+     "origin_airport_code",
+     "origin_city",
+     "origin_state",
+     "destination_airport_code",
+     "destination_city",
+     "destination_state"
+    ],
+    "allowed_time_grains": [
+     "day",
+     "week",
+     "month"
+    ],
+    "clarification_notes": [],
+    "combinable_with": "flight_operations",
+    "description": "Share of flight legs with a departure flag that departed 15 or more minutes late.",
+    "domain": "flight_operations",
+    "label": "Departure delay rate",
+    "name": "departure_delay_rate",
+    "synonyms": [
+     "Departure delay rate",
+     "late departure rate",
+     "departure delays rate",
+     "share of late departures"
+    ],
+    "time_dimension": "flight_date"
+   },
+   {
+    "allowed_dimensions": [
+     "flight_date",
+     "day_of_week",
+     "month",
+     "quarter",
+     "departure_time_block",
+     "arrival_time_block",
+     "carrier_code",
+     "origin_airport_code",
+     "origin_city",
+     "origin_state",
+     "destination_airport_code",
+     "destination_city",
+     "destination_state"
+    ],
+    "allowed_time_grains": [
+     "day",
+     "week",
+     "month"
+    ],
+    "clarification_notes": [],
+    "combinable_with": "flight_operations",
+    "description": "Share of flight legs with an arrival flag that arrived 15 or more minutes late.",
+    "domain": "flight_operations",
+    "label": "Arrival delay rate",
+    "name": "arrival_delay_rate",
+    "synonyms": [
+     "Arrival delay rate",
+     "late arrival rate",
+     "arrival delays rate",
+     "share of late arrivals"
+    ],
+    "time_dimension": "flight_date"
+   },
+   {
+    "allowed_dimensions": [
+     "flight_date",
+     "day_of_week",
+     "month",
+     "quarter",
+     "departure_time_block",
+     "arrival_time_block",
+     "carrier_code",
+     "origin_airport_code",
+     "origin_city",
+     "origin_state",
+     "destination_airport_code",
+     "destination_city",
+     "destination_state"
+    ],
+    "allowed_time_grains": [
+     "day",
+     "week",
+     "month"
+    ],
+    "clarification_notes": [],
+    "combinable_with": "flight_operations",
+    "description": "Number of flight legs flagged as delayed 15+ minutes at departure.",
+    "domain": "flight_operations",
+    "label": "Departure delayed flight count",
+    "name": "departure_delayed_flight_count",
+    "synonyms": [
+     "Departure delayed flight count",
+     "late departures",
+     "delayed departures",
+     "number of delayed departures"
+    ],
+    "time_dimension": "flight_date"
+   },
+   {
+    "allowed_dimensions": [
+     "flight_date",
+     "day_of_week",
+     "month",
+     "quarter",
+     "departure_time_block",
+     "arrival_time_block",
+     "carrier_code",
+     "origin_airport_code",
+     "origin_city",
+     "origin_state",
+     "destination_airport_code",
+     "destination_city",
+     "destination_state"
+    ],
+    "allowed_time_grains": [
+     "day",
+     "week",
+     "month"
+    ],
+    "clarification_notes": [],
+    "combinable_with": "flight_operations",
+    "description": "Number of flight legs flagged as delayed 15+ minutes at arrival.",
+    "domain": "flight_operations",
+    "label": "Arrival delayed flight count",
+    "name": "arrival_delayed_flight_count",
+    "synonyms": [
+     "Arrival delayed flight count",
+     "late arrivals",
+     "delayed arrivals",
+     "number of delayed arrivals"
+    ],
+    "time_dimension": "flight_date"
+   }
+  ],
+  "request_id": "b733175ee47b477f83c951e681fd2946",
+  "response_rules": [
+   "Answer only with a metric, dimensions and filters listed in this context.",
+   "If the question is ambiguous, ask a clarifying question and never guess.",
+   "If the question needs data that is not available, say it is unsupported.",
+   "Never produce SQL, table names, column names or joins."
+  ],
+  "selected_domains": [
+   "flight_operations"
+  ]
+ }
+}

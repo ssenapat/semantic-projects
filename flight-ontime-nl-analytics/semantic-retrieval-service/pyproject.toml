@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "semantic-retrieval-service"
+version = "0.1.0"
+description = "Semantic Retrieval Service (Retriever) for transport statistics"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi==0.162.0",
+  "uvicorn==0.54.0",
+  "pydantic==2.14.1",
+  "pydantic-settings==2.16.2",
+  "httpx==0.28.1",
+  "rank-bm25==0.2.2",
+  "pyyaml==6.0.3",
+]
+
+[project.optional-dependencies]
+dev = ["pytest==9.2.0"]
+
+[tool.setuptools.packages.find]
+include = ["semantic_retrieval_service*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
