@@ -24,3 +24,6 @@ logs/
 flight-ontime-nl-analytics/data/*.csv
 flight-ontime-nl-analytics/data/*.zip
 flight-ontime-nl-analytics/data/scripts/2026*/
+
+.git-token.txt
+
