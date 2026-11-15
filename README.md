@@ -265,3 +265,13 @@ semantic-projects/
     ├── data/                     loader scripts + SQL
     └── e2e/                      end-to-end tests
 ```
+
+## 9. License and attribution
+
+Released under the [MIT License](LICENSE). You are free to use, modify and distribute it, including commercially. The license only requires that you keep the copyright notice in copies of the code.
+
+If this project helps you, a credit would be appreciated (not required beyond the notice above). For example, a link in your README, docs, blog post or talk:
+
+> Built with ideas/code from [semantic-projects](https://github.com/<your-username>/semantic-projects) by Srinivasa Senapathi.
+
+A star on the repo also helps.
