@@ -1,6 +1,12 @@
 # Semantic Projects
 
-Two working examples of a **semantic layer for natural-language analytics**: a user asks a question in plain English, and gets a governed, read-only answer from a PostgreSQL database. No user (and no LLM) ever writes SQL.
+**Let business users ask questions of your data in plain English, without letting an LLM write SQL.**
+
+Two working examples of a **semantic layer for natural-language analytics**: a user asks a question, and gets a governed, read-only answer from a PostgreSQL database. No user (and no LLM) ever writes SQL.
+
+**Who is it for?** Data and analytics engineers, architects and AI builders who want natural-language access to a database that is consistent, safe and explainable, and who would rather not hand SQL generation to an LLM.
+
+**Why try it?** Both examples run end to end on your machine, including an offline mode with no LLM, so you can see the whole flow before adapting it to your own data. If a question is vague, the system asks for clarification instead of guessing.
 
 | Project | Data | Folder |
 |---|---|---|
@@ -12,6 +18,47 @@ Two working examples of a **semantic layer for natural-language analytics**: a u
 | ![Pagila rental analytics](pics/pagila-rental-analytics.png) | ![Flight analytics](pics/flight-analytics.png) |
 
 Both projects share the same architecture. This guide explains it so you can build your own on a different dataset.
+
+## Quick start
+
+You need Python 3.11 or later and a PostgreSQL database loaded with the example data (setup steps are in [section 7](#7-running-the-examples)).
+
+```bash
+cd flight-ontime-nl-analytics          # or: cd pagila-semantic
+./run-local.sh setup                   # creates .venv
+export PGPASSWORD=...                  # never stored in a file
+./run-local.sh start --stub-llm        # offline demo, no LLM needed
+```
+
+Open `http://127.0.0.1:8501` (flights) or `http://127.0.0.1:8511` (Pagila) and ask a question.
+
+## Example
+
+**Input:** *"cancelled flights by departure airport for Jul 2026"*
+
+**Output:** a bar chart of cancelled flights per origin airport (352 rows), shown with the metric version, time basis and date range. If you type something vague like *"show flight delays"*, you get a clarification question and nothing runs. The full step-by-step is in [section 5](#5-walk-through-of-one-question).
+
+## Why this project?
+
+- **Safe by design:** the LLM only picks from approved metrics and dimensions. Deterministic code validates the request and generates the SQL, which runs read-only.
+- **Consistent numbers:** each metric's meaning (time basis, what counts as "cancelled") is defined once, in reviewed YAML.
+- **Explainable:** every answer shows which metric, version and date range produced it.
+- **Dashboards stay:** this complements dashboards, which remain the right tool for broad and external audiences. It is for the leader who needs a quick answer to a new question.
+
+Honest limitations:
+
+- PostgreSQL only.
+- Someone must author and review the semantic layer (an LLM can draft it, see [section 6](#drafting-the-semantic-layer-with-an-llm-reviewed-by-a-human)).
+- These are reference examples you copy and adapt, not a packaged product.
+- The large flight CSVs are not in git; you load them with the provided script.
+
+## Documentation
+
+- [Architecture and concepts](#2-architecture) (this README)
+- [Build your own semantic project](#6-build-your-own-semantic-project)
+- [`specs/`](specs/): architecture and API specifications
+- Per-project READMEs in [`pagila-semantic/`](pagila-semantic/) and [`flight-ontime-nl-analytics/`](flight-ontime-nl-analytics/)
+- Background reading: [`ARTICLE.md`](ARTICLE.md)
 
 ---
 
@@ -266,12 +313,16 @@ semantic-projects/
     └── e2e/                      end-to-end tests
 ```
 
-## 9. License and attribution
+## 9. Contributing
+
+Issues and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for ideas to start with, including approachable ones for first-time contributors. If you build a semantic layer for another dataset, please open an issue and share it.
+
+If this project is useful to you, consider starring it. It helps others find it.
+
+## 10. License and attribution
 
 Released under the [MIT License](LICENSE). You are free to use, modify and distribute it, including commercially. The license only requires that you keep the copyright notice in copies of the code.
 
 If this project helps you, a credit would be appreciated (not required beyond the notice above). For example, a link in your README, docs, blog post or talk:
 
-> Built with ideas/code from [semantic-projects](https://github.com/<your-username>/semantic-projects) by Srinivasa Senapathi.
-
-A star on the repo also helps.
+> Built with ideas/code from [semantic-projects](https://github.com/ssenapat/semantic-projects) by Srinivasa Senapathi.
